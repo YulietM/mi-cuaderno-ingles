@@ -53,48 +53,50 @@ function json(data, status = 200) {
   });
 }
 
-export default async function handler(request) {
-  if (request.method !== 'POST') {
-    return json({ error: 'method_not_allowed' }, 405);
-  }
-
-  const profile = await verifyUser(request.headers.get('authorization'));
-  if (!profile || !profile.sub) {
-    return json({ error: 'unauthorized' }, 401);
-  }
-
-  let local;
-  try {
-    local = await request.json();
-  } catch (err) {
-    local = {};
-  }
-  if (!local || typeof local !== 'object') local = {};
-
-  const pathname = `progress/${profile.sub}.json`;
-
-  let cloud = { vocab: [], bestScore: 0, repaso: [] };
-  try {
-    const result = await get(pathname, { access: 'private' });
-    if (result && result.statusCode === 200 && result.stream) {
-      const text = await new Response(result.stream).text();
-      cloud = JSON.parse(text);
+export default {
+  async fetch(request) {
+    if (request.method !== 'POST') {
+      return json({ error: 'method_not_allowed' }, 405);
     }
-  } catch (err) {
-    // no cloud data yet, or transient error — proceed with local only
+
+    const profile = await verifyUser(request.headers.get('authorization'));
+    if (!profile || !profile.sub) {
+      return json({ error: 'unauthorized' }, 401);
+    }
+
+    let local;
+    try {
+      local = await request.json();
+    } catch (err) {
+      local = {};
+    }
+    if (!local || typeof local !== 'object') local = {};
+
+    const pathname = `progress/${profile.sub}.json`;
+
+    let cloud = { vocab: [], bestScore: 0, repaso: [] };
+    try {
+      const result = await get(pathname, { access: 'private' });
+      if (result && result.statusCode === 200 && result.stream) {
+        const text = await new Response(result.stream).text();
+        cloud = JSON.parse(text);
+      }
+    } catch (err) {
+      // no cloud data yet, or transient error — proceed with local only
+    }
+
+    const merged = mergeProgress(local, cloud);
+
+    try {
+      await put(pathname, JSON.stringify(merged), {
+        access: 'private',
+        contentType: 'application/json',
+        allowOverwrite: true
+      });
+    } catch (err) {
+      return json({ error: 'storage_failed' }, 500);
+    }
+
+    return json(merged, 200);
   }
-
-  const merged = mergeProgress(local, cloud);
-
-  try {
-    await put(pathname, JSON.stringify(merged), {
-      access: 'private',
-      contentType: 'application/json',
-      allowOverwrite: true
-    });
-  } catch (err) {
-    return json({ error: 'storage_failed' }, 500);
-  }
-
-  return json(merged, 200);
-}
+};
