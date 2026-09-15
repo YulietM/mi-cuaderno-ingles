@@ -52,14 +52,18 @@ Una vez desplegada con tu propia URL:
 - **Android (Chrome):** abre la URL → menú (⋮) → "Añadir a pantalla de inicio".
 - **iPhone (Safari):** abre la URL → compartir (⬆️) → "Añadir a pantalla de inicio".
 
-## Iniciar sesión con Google (opcional)
+## Iniciar sesión con Google y progreso en la nube
 
-La app ya trae el código para mostrar un botón **"Iniciar sesión con Google"**
-junto al puntaje: al entrar, muestra tu nombre y foto de cuenta. Es solo
-identificación — el vocabulario, puntaje y repaso se siguen guardando en el
-navegador de cada dispositivo (`localStorage`), como hasta ahora; no hay base
-de datos ni sincronización entre celular y web. Está desactivado hasta que
-completes el `GOOGLE_CLIENT_ID`. Pasos, una sola vez:
+La app pide iniciar sesión con Google apenas se abre (si nunca lo has hecho en
+ese navegador) y guarda tu vocabulario, puntaje y repaso en la nube, ligados a
+tu cuenta — así es el mismo progreso en el celular y en la web, y una vez que
+inicias sesión no te lo vuelve a pedir en ese dispositivo. El almacenamiento
+es [Vercel Blob](https://vercel.com/docs/vercel-blob) (ya está creado y
+conectado a este proyecto, dentro del plan gratis) y una función serverless
+(`api/progress.js`) que verifica tu sesión de Google antes de leer o guardar
+nada — nadie puede leer o escribir el progreso de otra cuenta.
+
+Está desactivado hasta que completes el `GOOGLE_CLIENT_ID`. Pasos, una sola vez:
 
 1. Ve a [console.cloud.google.com](https://console.cloud.google.com) → crea
    un proyecto (o usa uno existente).
@@ -79,5 +83,12 @@ completes el `GOOGLE_CLIENT_ID`. Pasos, una sola vez:
    `.apps.googleusercontent.com`, no es secreto).
 6. En `index.html`, busca `const GOOGLE_CLIENT_ID = "TU_CLIENT_ID...` (sección
    `LOGIN CON GOOGLE`) y pega el tuyo.
-7. Sube el cambio a GitHub (Vercel vuelve a desplegar solo). Al abrir la app
-   verás el botón de Google junto al puntaje.
+7. Agrega ese mismo Client ID como variable de entorno en Vercel (la usa
+   `api/progress.js` para verificar que el inicio de sesión es legítimo):
+   ```
+   vercel env add GOOGLE_CLIENT_ID production
+   ```
+   (pégalo cuando lo pida; también puedes hacerlo desde el dashboard de
+   Vercel → Project Settings → Environment Variables).
+8. Sube el cambio a GitHub (Vercel vuelve a desplegar solo). Al abrir la app
+   te pedirá iniciar sesión con Google antes de dejarte entrar.

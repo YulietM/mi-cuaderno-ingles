@@ -116,6 +116,56 @@
   }
 
   #authBadge { white-space: normal; }
+
+  .login-gate {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    background: var(--bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+  .login-card {
+    max-width: 380px;
+    width: 100%;
+    background: var(--bg-card);
+    border: 1px solid var(--rule);
+    border-radius: 12px;
+    padding: 32px 28px;
+    text-align: center;
+    box-shadow: 0 8px 30px var(--shadow);
+  }
+  .login-icon {
+    width: 76px;
+    height: 76px;
+    border-radius: 18px;
+    margin-bottom: 16px;
+  }
+  .login-card h1 {
+    font-family: 'Fraunces', serif;
+    font-size: 1.5rem;
+    margin: 0 0 12px;
+  }
+  .login-card p {
+    color: var(--ink-soft);
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin: 0 0 20px;
+  }
+  .gate-btn-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 16px;
+    min-height: 40px;
+  }
+  .login-note {
+    font-size: 0.78rem !important;
+    color: var(--ink-soft);
+    opacity: 0.8;
+    margin: 0 !important;
+  }
   .auth-btn {
     font-family: 'Work Sans', system-ui, sans-serif;
     font-size: 0.85rem;
@@ -480,7 +530,16 @@
 </style>
 </head>
 <body>
-<div class="wrap">
+<div id="loginGate" class="login-gate" style="display:none;">
+  <div class="login-card">
+    <img src="icon-192.png" alt="" class="login-icon">
+    <h1>Mi Cuaderno de Inglés</h1>
+    <p>Inicia sesión con tu cuenta de Google para guardar tu progreso, tus aciertos y tus errores — así la app te propone qué practicar cada vez que entras, en cualquier dispositivo.</p>
+    <div id="gateBtnContainer" class="gate-btn-container"></div>
+    <p class="login-note">Tu vocabulario, puntaje y repaso quedan ligados a tu cuenta.</p>
+  </div>
+</div>
+<div class="wrap" id="appWrap">
   <header>
     <div>
       <h1>Mi Cuaderno de Inglés</h1>
@@ -875,12 +934,14 @@ function loadVocab(){
 }
 function saveVocab(list){
   try { localStorage.setItem("mi_vocab_en", JSON.stringify(list)); } catch(e){}
+  queueCloudSync();
 }
 function loadBest(){
   try { return parseInt(localStorage.getItem("mi_best_score") || "0", 10); } catch(e){ return 0; }
 }
 function saveBest(n){
   try { localStorage.setItem("mi_best_score", String(n)); } catch(e){}
+  queueCloudSync();
 }
 
 function loadRepaso(){
@@ -891,6 +952,7 @@ function loadRepaso(){
 }
 function saveRepaso(list){
   try { localStorage.setItem("mi_repaso", JSON.stringify(list)); } catch(e){}
+  queueCloudSync();
 }
 let repaso = loadRepaso();
 
@@ -930,6 +992,8 @@ refreshRepasoBadge();
 // Client ID de OAuth (Google Cloud Console → APIs y servicios → Credenciales →
 // Crear credenciales → ID de cliente de OAuth → tipo "Aplicación web").
 // No es secreto: es normal y seguro que viaje en el HTML de un sitio público.
+// El mismo valor también debe quedar como variable de entorno GOOGLE_CLIENT_ID
+// en el proyecto de Vercel (la usa api/progress.js para verificar la sesión).
 const GOOGLE_CLIENT_ID = "TU_CLIENT_ID.apps.googleusercontent.com";
 const googleLoginEnabled = GOOGLE_CLIENT_ID !== "TU_CLIENT_ID.apps.googleusercontent.com";
 
@@ -943,13 +1007,68 @@ function decodeJwt(token){
   } catch(e){ return null; }
 }
 
+const loginGate = document.getElementById("loginGate");
+const appWrap = document.getElementById("appWrap");
+const gateBtnContainer = document.getElementById("gateBtnContainer");
 const googleBtnContainer = document.getElementById("googleBtnContainer");
 const userInfoEl = document.getElementById("userInfo");
 const userNameEl = document.getElementById("userName");
 const userPhotoEl = document.getElementById("userPhoto");
 const signOutBtn = document.getElementById("signOutBtn");
 
-function showSignedIn(profile){
+let googleIdToken = null;
+let cloudSyncTimer = null;
+
+function openApp(){
+  loginGate.style.display = "none";
+  appWrap.style.display = "";
+}
+function showGate(){
+  loginGate.style.display = "flex";
+  appWrap.style.display = "none";
+}
+
+function applyMergedProgress(merged){
+  if (!merged) return;
+  if (Array.isArray(merged.vocab)) {
+    vocab = merged.vocab;
+    localStorage.setItem("mi_vocab_en", JSON.stringify(vocab));
+  }
+  if (typeof merged.bestScore === "number" && merged.bestScore > loadBest()) {
+    localStorage.setItem("mi_best_score", String(merged.bestScore));
+  }
+  document.getElementById("bestScore").textContent = loadBest();
+  if (Array.isArray(merged.repaso)) {
+    repaso = merged.repaso;
+    localStorage.setItem("mi_repaso", JSON.stringify(repaso));
+  }
+  refreshRepasoBadge();
+  if (typeof render === "function") render();
+}
+
+async function syncWithCloud(){
+  if (!googleIdToken) return;
+  try {
+    const res = await fetch("/api/progress", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "Authorization": "Bearer " + googleIdToken },
+      body: JSON.stringify({ vocab: loadVocab(), bestScore: loadBest(), repaso: loadRepaso() })
+    });
+    if (!res.ok) return;
+    applyMergedProgress(await res.json());
+  } catch(err) {
+    console.warn("No se pudo sincronizar con la nube:", err);
+  }
+}
+
+function queueCloudSync(){
+  if (!googleLoginEnabled || !googleIdToken) return;
+  clearTimeout(cloudSyncTimer);
+  cloudSyncTimer = setTimeout(syncWithCloud, 1200);
+}
+
+function showSignedIn(profile, idToken){
+  if (idToken) googleIdToken = idToken;
   googleBtnContainer.style.display = "none";
   userInfoEl.style.display = "flex";
   userNameEl.textContent = profile.name || profile.email || "Cuenta";
@@ -959,15 +1078,35 @@ function showSignedIn(profile){
       name: profile.name, email: profile.email, picture: profile.picture
     }));
   } catch(e){}
+  openApp();
+  if (idToken) syncWithCloud();
 }
 
 function showSignedOut(){
+  googleIdToken = null;
   googleBtnContainer.style.display = "block";
   userInfoEl.style.display = "none";
   try { localStorage.removeItem("mi_google_profile"); } catch(e){}
+  showGate();
 }
 
 if (googleLoginEnabled) {
+  // Decide de una vez, sin esperar a que cargue nada más, si se ve la app o
+  // la puerta de entrada — evita el parpadeo de mostrar la app y taparla.
+  const cachedProfile = (() => {
+    try { return JSON.parse(localStorage.getItem("mi_google_profile") || "null"); }
+    catch(e){ return null; }
+  })();
+  if (cachedProfile) {
+    userInfoEl.style.display = "flex";
+    userNameEl.textContent = cachedProfile.name || cachedProfile.email || "Cuenta";
+    userPhotoEl.src = cachedProfile.picture || "icon-192.png";
+    googleBtnContainer.style.display = "none";
+    openApp();
+  } else {
+    showGate();
+  }
+
   signOutBtn.addEventListener("click", () => {
     if (window.google && google.accounts && google.accounts.id) {
       google.accounts.id.disableAutoSelect();
@@ -975,24 +1114,29 @@ if (googleLoginEnabled) {
     showSignedOut();
   });
 
-  window.addEventListener("load", () => {
-    if (!window.google || !google.accounts || !google.accounts.id) return;
+  (function waitForGoogleScript(){
+    if (!window.google || !google.accounts || !google.accounts.id) {
+      setTimeout(waitForGoogleScript, 50);
+      return;
+    }
     google.accounts.id.initialize({
       client_id: GOOGLE_CLIENT_ID,
+      auto_select: true,
       callback: (response) => {
         const profile = decodeJwt(response.credential);
-        if (profile) showSignedIn(profile);
+        if (profile) showSignedIn(profile, response.credential);
       }
     });
     google.accounts.id.renderButton(googleBtnContainer, {
       theme: "outline", size: "medium", text: "signin", shape: "pill"
     });
-
-    const saved = localStorage.getItem("mi_google_profile");
-    if (saved) {
-      try { showSignedIn(JSON.parse(saved)); } catch(e){}
-    }
-  });
+    google.accounts.id.renderButton(gateBtnContainer, {
+      theme: "filled_blue", size: "large", text: "signin_with", shape: "pill"
+    });
+    // Intenta renovar/confirmar la sesión en segundo plano (One Tap silencioso),
+    // tanto si ya estabas logueado como si Google recuerda tu cuenta.
+    google.accounts.id.prompt();
+  })();
 } else {
   const authBadge = document.getElementById("authBadge");
   if (authBadge) authBadge.style.display = "none";
