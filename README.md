@@ -51,3 +51,43 @@ Es un **archivo HTML único** (`index.html`), sin backend, sin build, sin depend
 Una vez desplegada con tu propia URL:
 - **Android (Chrome):** abre la URL → menú (⋮) → "Añadir a pantalla de inicio".
 - **iPhone (Safari):** abre la URL → compartir (⬆️) → "Añadir a pantalla de inicio".
+
+## Sincronizar progreso entre dispositivos con Google (opcional)
+
+La app ya trae el código para iniciar sesión con Google y guardar tu vocabulario,
+puntaje y repaso en la nube (Firebase), para que sea el mismo en el celular y en
+la web. Está desactivado hasta que conectes tu propio proyecto de Firebase
+(gratis). Pasos, una sola vez:
+
+1. Ve a [console.firebase.google.com](https://console.firebase.google.com) →
+   **Crear proyecto** (puedes desactivar Google Analytics, no hace falta).
+2. Dentro del proyecto: ícono **</>** ("Web") para agregar una app web. Ponle
+   un nombre (ej. "mi-cuaderno-ingles") y créala. Firebase te muestra un
+   objeto `firebaseConfig` con `apiKey`, `authDomain`, etc. — cópialo.
+3. En `index.html`, busca `const firebaseConfig = {` (sección
+   `SYNC CON GOOGLE`) y reemplaza los valores `"TU_..."` por los que te dio
+   Firebase. Estos valores no son secretos, está bien que queden en el
+   repo público.
+4. En el menú lateral, ve a **Authentication → Sign-in method** → habilita
+   **Google**.
+5. En **Authentication → Settings → Authorized domains**, agrega el dominio
+   donde publicaste la app (por ejemplo `tuusuario.github.io`).
+6. En **Firestore Database → Crear base de datos** (modo producción, la
+   región no importa mucho). Luego en la pestaña **Reglas**, reemplaza el
+   contenido por:
+   ```
+   rules_version = '2';
+   service cloud.firestore {
+     match /databases/{database}/documents {
+       match /progress/{userId} {
+         allow read, write: if request.auth != null && request.auth.uid == userId;
+       }
+     }
+   }
+   ```
+   y dale **Publicar**. Esto hace que cada quien solo pueda leer/escribir su
+   propio progreso.
+7. Sube el cambio a GitHub (o vuelve a desplegar). Al abrir la app verás el
+   botón **"Iniciar sesión con Google"** junto al puntaje. Al iniciar sesión
+   por primera vez en un dispositivo nuevo, la app combina lo que tenías
+   localmente con lo que ya había en la nube (no se pierde nada).
