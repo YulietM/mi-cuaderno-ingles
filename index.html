@@ -925,6 +925,113 @@ const GRAMMAR = {
   }
 };
 
+/* ---------- FRASES COMPLETAS (mezcla: to be, have/has, posesivos, contracciones) ---------- */
+const SENTENCE_QUIZ = [
+  {prompt:"Ella es maestra.", options:["She's a teacher.","She has a teacher.","Her's a teacher.","She teacher."], correct:"She's a teacher."},
+  {prompt:"Nosotros estamos listos.", options:["We're ready.","We has ready.","Our ready.","We is ready."], correct:"We're ready."},
+  {prompt:"Ellos no están en casa.", options:["They aren't home.","They haven't home.","They don't home.","They isn't home."], correct:"They aren't home."},
+  {prompt:"No estoy cansada.", options:["I'm not tired.","I amn't tired.","I not tired.","I don't tired."], correct:"I'm not tired."},
+  {prompt:"¿Eres tú su hermano?", options:["Are you her brother?","You're her brother?","Do you her brother?","Is you her brother?"], correct:"Are you her brother?"},
+  {prompt:"Mi hermano tiene un perro.", options:["My brother's a dog.","My brother has a dog.","My brother have a dog.","My brothers dog."], correct:"My brother has a dog."},
+  {prompt:"Ella tiene dos gatos.", options:["She's two cats.","She have two cats.","She has two cats.","Her has two cats."], correct:"She has two cats."},
+  {prompt:"Nosotros no tenemos tiempo.", options:["We haven't time.","We don't have time.","We isn't have time.","We not have time."], correct:"We don't have time."},
+  {prompt:"Él no tiene hermanas. (con 'got')", options:["He hasn't got sisters.","He don't got sisters.","He isn't got sisters.","He haven't got sisters."], correct:"He hasn't got sisters."},
+  {prompt:"¿Qué significa 'she's' aquí?  —  She's my sister.", options:["she is","she has","she was","she does"], correct:"she is"},
+  {prompt:"¿Qué significa 'she's' aquí?  —  She's got a new bike.", options:["she has","she is","she was","she does"], correct:"she has"},
+  {prompt:"¿Qué significa 'it's' aquí?  —  It's raining.", options:["it is","it has","it does","it was"], correct:"it is"},
+  {prompt:"Este es el perro de mi hermano.", options:["This is my brother's dog.","This is my brothers dog.","This is my brother dog.","This is my brother is dog."], correct:"This is my brother's dog."},
+  {prompt:"Ese es su carro (de ella).", options:["That's her car.","That's she car.","That's hers car.","That's her's car."], correct:"That's her car."},
+  {prompt:"El nombre de mi gato es Rex.", options:["My cat's name is Rex.","My cats name is Rex.","My cat name's is Rex.","My cat is name Rex."], correct:"My cat's name is Rex."},
+  {prompt:"Esos son nuestros libros.", options:["Those are our books.","Those are ours books.","Those are us books.","Those're our books."], correct:"Those are our books."},
+  {prompt:"Su casa (de ellos) es grande.", options:["Their house is big.","There house is big.","They're house is big.","Theirs house is big."], correct:"Their house is big."},
+  {prompt:"No me gusta el café, pero a mi hermana sí.", options:["I don't like coffee, but my sister does.","I doesn't like coffee, but my sister do.","I not like coffee, but my sister does.","I don't like coffee, but my sister is."], correct:"I don't like coffee, but my sister does."},
+  {prompt:"Ella no trabaja los domingos.", options:["She doesn't work on Sundays.","She don't works on Sundays.","She isn't work on Sundays.","She not works on Sundays."], correct:"She doesn't work on Sundays."},
+  {prompt:"Ya terminé mi tarea.", options:["I've finished my homework.","I'm finished my homework.","I has finished my homework.","I finished've my homework."], correct:"I've finished my homework."},
+  {prompt:"Él no ha llegado todavía.", options:["He hasn't arrived yet.","He haven't arrived yet.","He didn't arrived yet.","He isn't arrived yet."], correct:"He hasn't arrived yet."},
+  {prompt:"Mis padres están en el trabajo.", options:["My parents are at work.","My parents is at work.","My parents has at work.","My parents're work."], correct:"My parents are at work."},
+  {prompt:"¿Tienen ellos un carro nuevo?", options:["Do they have a new car?","Have they a new car?","Are they have a new car?","Does they have a new car?"], correct:"Do they have a new car?"},
+  {prompt:"Estamos aprendiendo inglés juntos.", options:["We're learning English together.","We has learning English together.","We learning English together.","We're learn English together."], correct:"We're learning English together."}
+];
+
+const SENTENCE_PRACTICE = pairs([
+  ["She's a teacher.","Ella es maestra."],
+  ["We're ready.","Nosotros estamos listos."],
+  ["They aren't home.","Ellos no están en casa."],
+  ["My brother has a dog.","Mi hermano tiene un perro."],
+  ["She has two cats.","Ella tiene dos gatos."],
+  ["We don't have time.","Nosotros no tenemos tiempo."],
+  ["He hasn't got sisters.","Él no tiene hermanas."],
+  ["This is my brother's dog.","Este es el perro de mi hermano."],
+  ["That's her car.","Ese es su carro (de ella)."],
+  ["My cat's name is Rex.","El nombre de mi gato es Rex."],
+  ["Those are our books.","Esos son nuestros libros."],
+  ["Their house is big.","Su casa (de ellos) es grande."],
+  ["She doesn't work on Sundays.","Ella no trabaja los domingos."],
+  ["I've finished my homework.","Ya terminé mi tarea."],
+  ["He hasn't arrived yet.","Él no ha llegado todavía."],
+  ["My parents are at work.","Mis padres están en el trabajo."],
+  ["Do they have a new car?","¿Tienen ellos un carro nuevo?"],
+  ["We're learning English together.","Estamos aprendiendo inglés juntos."]
+]);
+
+/* ---------- TEXTOS CORTOS (leer y escribir párrafos) ---------- */
+const TEXTS = {
+  family: {
+    label: "My Family",
+    paragraph: "My name is Ana. I'm ten years old. I have one brother and one sister. My brother's name is Leo. My sister's name is Mia. We live with our parents in a small house.",
+    questions: [
+      {prompt:"How old is Ana?", options:["Nine","Ten","Eleven","Twelve"], correct:"Ten"},
+      {prompt:"What is Ana's brother's name?", options:["Mia","Leo","Rex","Sofia"], correct:"Leo"},
+      {prompt:"Who does Ana live with?", options:["Her friends","Her grandparents","Her parents","Alone"], correct:"Her parents"}
+    ]
+  },
+  day: {
+    label: "My Day",
+    paragraph: "I wake up at seven o'clock. I brush my teeth and eat breakfast. Then I go to school. School isn't far from my house. After school, I do my homework and play with my friends.",
+    questions: [
+      {prompt:"What time does she wake up?", options:["Six o'clock","Seven o'clock","Eight o'clock","Nine o'clock"], correct:"Seven o'clock"},
+      {prompt:"Is school far from her house?", options:["Yes, it is.","No, it isn't.","She doesn't know.","It's very far."], correct:"No, it isn't."},
+      {prompt:"What does she do after school?", options:["She sleeps.","She works.","Homework and play.","She cooks."], correct:"Homework and play."}
+    ]
+  },
+  house: {
+    label: "My House",
+    paragraph: "My house has three bedrooms and one kitchen. The kitchen is next to the living room. There's a small garden behind the house. My cat's favorite spot is under the table.",
+    questions: [
+      {prompt:"How many bedrooms does the house have?", options:["Two","Three","Four","One"], correct:"Three"},
+      {prompt:"Where is the garden?", options:["In front of the house","Behind the house","Inside the kitchen","Next to the bedrooms"], correct:"Behind the house"},
+      {prompt:"Where is the cat's favorite spot?", options:["On the bed","Under the table","In the garden","In the kitchen"], correct:"Under the table"}
+    ]
+  },
+  friend: {
+    label: "My Best Friend",
+    paragraph: "My best friend's name is Sofia. She's funny and kind. She doesn't like vegetables, but she loves fruit. We don't go to the same school, but we're always together on weekends.",
+    questions: [
+      {prompt:"What is she like?", options:["Funny and kind","Shy and quiet","Serious","Tired"], correct:"Funny and kind"},
+      {prompt:"What does Sofia love?", options:["Vegetables","Fruit","School","Homework"], correct:"Fruit"},
+      {prompt:"Do they go to the same school?", options:["Yes, they do.","No, they don't.","Sometimes.","She doesn't say."], correct:"No, they don't."}
+    ]
+  },
+  weather: {
+    label: "The Weather Today",
+    paragraph: "It's cold today. It isn't sunny, and it's a little windy. I'm wearing a jacket and warm shoes. I don't like cold weather, but I love hot chocolate.",
+    questions: [
+      {prompt:"Is it sunny today?", options:["Yes, it is.","No, it isn't.","It's very hot.","She doesn't know."], correct:"No, it isn't."},
+      {prompt:"What is she wearing?", options:["A jacket and warm shoes","A swimsuit","A hat only","Nothing warm"], correct:"A jacket and warm shoes"},
+      {prompt:"What does she love?", options:["Cold weather","Hot chocolate","Rain","Wind"], correct:"Hot chocolate"}
+    ]
+  },
+  pet: {
+    label: "My Pet",
+    paragraph: "I have a small dog. His name is Rex. Rex's favorite toy is a red ball. He isn't very big, but he's very fast. I love my dog very much.",
+    questions: [
+      {prompt:"What is the dog's name?", options:["Leo","Max","Rex","Sam"], correct:"Rex"},
+      {prompt:"What is Rex's favorite toy?", options:["A red ball","A bone","A blue ball","A stick"], correct:"A red ball"},
+      {prompt:"Is Rex big?", options:["Yes, very big.","No, he isn't very big.","He is medium.","She doesn't say."], correct:"No, he isn't very big."}
+    ]
+  }
+};
+
 /* ---------- STORAGE ---------- */
 function loadVocab(){
   try {
@@ -1239,6 +1346,7 @@ const TABS = [
   {id:"patterns", label:"Patrones"},
   {id:"sight", label:"Sight Words"},
   {id:"grammar", label:"Gramática"},
+  {id:"sentences", label:"Frases y Textos"},
   {id:"vocab", label:"Mi Vocabulario"},
   {id:"repaso", label:"📌 Repaso"},
   {id:"dictado", label:"Dictado General"}
@@ -1267,6 +1375,7 @@ function render(){
   else if (currentTab === "patterns") renderPatterns();
   else if (currentTab === "sight") renderWordTab(SIGHT, "Sight Words", "Palabras irregulares de alta frecuencia: se memorizan como imagen completa.");
   else if (currentTab === "grammar") renderGrammar();
+  else if (currentTab === "sentences") renderSentences();
   else if (currentTab === "vocab") renderVocab();
   else if (currentTab === "repaso") renderRepaso();
   else if (currentTab === "dictado") renderDictadoGeneral();
@@ -1573,6 +1682,256 @@ function renderGrammarQuiz(key, questions){
     btn.onclick = () => { st.idx++; st.answered = false; render(); };
     root.appendChild(btn);
   }
+}
+
+/* ---------- FRASES Y TEXTOS ---------- */
+let sentencesViewMode = "quiz"; // quiz | practice | texts
+let sentenceQuizState = null;
+let currentTextKey = Object.keys(TEXTS)[0];
+let textViewMode = "read"; // read | write
+const textReadState = {};
+const textWriteState = {};
+
+function renderSentences(){
+  const h = document.createElement("div");
+  h.innerHTML = `<h2>Frases y Textos</h2><p class="lead">Junta todo lo aprendido — to be, have/has, posesivos y contracciones — en frases completas con sentido, y en textos cortos para leer y escribir.</p>`;
+  root.appendChild(h);
+
+  const modeToggle = document.createElement("div");
+  modeToggle.className = "mode-toggle";
+  modeToggle.innerHTML = `
+    <button data-m="quiz" class="${sentencesViewMode==='quiz'?'active':''}">🎮 Frases (Quiz)</button>
+    <button data-m="practice" class="${sentencesViewMode==='practice'?'active':''}">🃏 Frases (Tarjetas y Dictado)</button>
+    <button data-m="texts" class="${sentencesViewMode==='texts'?'active':''}">📖 Textos cortos</button>
+  `;
+  modeToggle.querySelectorAll("button").forEach(b => b.onclick = () => { sentencesViewMode = b.dataset.m; render(); });
+  root.appendChild(modeToggle);
+
+  if (sentencesViewMode === "practice") {
+    renderWordTab(SENTENCE_PRACTICE, "Frases completas", "Tarjetas y dictado con frases completas de ejemplo.", "sentence-practice");
+  } else if (sentencesViewMode === "texts") {
+    renderTexts();
+  } else {
+    renderSentenceQuiz();
+  }
+}
+
+function renderSentenceQuiz(){
+  if (!sentenceQuizState) {
+    sentenceQuizState = { order: shuffle(SENTENCE_QUIZ.map((_,i)=>i)), idx:0, score:0, answered:false };
+  }
+  const st = sentenceQuizState;
+
+  if (st.idx >= st.order.length) {
+    const end = document.createElement("div");
+    end.innerHTML = `<div class="end-score">${st.score} / ${st.order.length} 🎉</div>`;
+    const btn = document.createElement("button");
+    btn.className = "btn";
+    btn.textContent = "Repetir";
+    btn.onclick = () => { sentenceQuizState = null; render(); };
+    end.appendChild(btn);
+    root.appendChild(end);
+    return;
+  }
+
+  const q = SENTENCE_QUIZ[st.order[st.idx]];
+  const p = document.createElement("div");
+  p.className = "progress-line";
+  p.textContent = `Frase ${st.idx+1} de ${st.order.length} — aciertos: ${st.score}`;
+  root.appendChild(p);
+
+  const qBox = document.createElement("div");
+  qBox.className = "letter-detail";
+  qBox.innerHTML = `<p style="margin:0 0 6px;font-size:1.05rem;">${q.prompt}</p>`;
+  root.appendChild(qBox);
+
+  const opts = document.createElement("div");
+  opts.className = "quiz-options";
+  opts.style.gridTemplateColumns = "repeat(1, 1fr)";
+  shuffle(q.options).forEach(opt => {
+    const b = document.createElement("button");
+    b.textContent = opt;
+    b.style.fontFamily = "'Work Sans', sans-serif";
+    b.style.fontSize = "0.95rem";
+    b.style.textAlign = "left";
+    b.disabled = st.answered;
+    if (st.answered && opt === q.correct) b.classList.add("correct");
+    b.onclick = () => {
+      if (st.answered) return;
+      st.answered = true;
+      if (opt === q.correct) { st.score++; b.classList.add("correct"); }
+      else b.classList.add("wrong");
+      render();
+    };
+    opts.appendChild(b);
+  });
+  root.appendChild(opts);
+
+  if (st.answered) {
+    const info = document.createElement("p");
+    info.style.marginTop = "12px";
+    info.innerHTML = `Respuesta correcta: <strong>${q.correct}</strong>`;
+    root.appendChild(info);
+    const btn = document.createElement("button");
+    btn.className = "btn";
+    btn.style.marginTop = "8px";
+    btn.textContent = "Siguiente →";
+    btn.onclick = () => { st.idx++; st.answered = false; render(); };
+    root.appendChild(btn);
+  }
+}
+
+function renderTexts(){
+  const sub = document.createElement("div");
+  sub.className = "subnav";
+  Object.keys(TEXTS).forEach(key => {
+    const b = document.createElement("button");
+    b.textContent = TEXTS[key].label;
+    if (key === currentTextKey) b.classList.add("active");
+    b.onclick = () => { currentTextKey = key; render(); };
+    sub.appendChild(b);
+  });
+  root.appendChild(sub);
+
+  const toggle = document.createElement("div");
+  toggle.className = "mode-toggle";
+  toggle.innerHTML = `
+    <button data-m="read" class="${textViewMode==='read'?'active':''}">📖 Leer y entender</button>
+    <button data-m="write" class="${textViewMode==='write'?'active':''}">✏️ Escribir el párrafo</button>
+  `;
+  toggle.querySelectorAll("button").forEach(b => b.onclick = () => { textViewMode = b.dataset.m; render(); });
+  root.appendChild(toggle);
+
+  if (textViewMode === "write") renderTextWriting(currentTextKey);
+  else renderTextReading(currentTextKey);
+}
+
+function renderTextReading(key){
+  const text = TEXTS[key];
+  if (!textReadState[key]) textReadState[key] = { answers: {} };
+  const st = textReadState[key];
+
+  const box = document.createElement("div");
+  box.className = "letter-detail";
+  box.innerHTML = `
+    <p style="margin:0 0 10px;font-size:1.05rem;line-height:1.6;">${text.paragraph}</p>
+    <button class="btn secondary">🔊 Leer texto completo</button>
+  `;
+  box.querySelector("button").onclick = () => speak(text.paragraph, {rate: speechRate * 0.9});
+  root.appendChild(box);
+
+  const qHeader = document.createElement("h2");
+  qHeader.style.marginTop = "22px";
+  qHeader.textContent = "¿Entendiste? 🧐";
+  root.appendChild(qHeader);
+
+  text.questions.forEach((q, qi) => {
+    const qBox = document.createElement("div");
+    qBox.className = "letter-detail";
+    qBox.style.marginTop = "10px";
+    qBox.innerHTML = `<p style="margin:0 0 8px;">${q.prompt}</p>`;
+    const opts = document.createElement("div");
+    opts.className = "quiz-options";
+    opts.style.gridTemplateColumns = "repeat(2, 1fr)";
+    const answered = st.answers[qi] !== undefined;
+    q.options.forEach(opt => {
+      const b = document.createElement("button");
+      b.textContent = opt;
+      b.style.fontFamily = "'Work Sans', sans-serif";
+      b.style.fontSize = "0.9rem";
+      b.disabled = answered;
+      if (answered && opt === q.correct) b.classList.add("correct");
+      if (answered && opt === st.answers[qi] && opt !== q.correct) b.classList.add("wrong");
+      b.onclick = () => { st.answers[qi] = opt; render(); };
+      opts.appendChild(b);
+    });
+    qBox.appendChild(opts);
+    root.appendChild(qBox);
+  });
+
+  const answeredCount = Object.keys(st.answers).length;
+  if (answeredCount === text.questions.length) {
+    const correctCount = text.questions.filter((q,qi) => st.answers[qi] === q.correct).length;
+    const done = document.createElement("div");
+    done.innerHTML = `<div class="end-score">${correctCount} / ${text.questions.length} 🎉</div>`;
+    const btn = document.createElement("button");
+    btn.className = "btn";
+    btn.textContent = "Repetir preguntas";
+    btn.onclick = () => { textReadState[key] = { answers: {} }; render(); };
+    done.appendChild(btn);
+    root.appendChild(done);
+  }
+}
+
+function normalizeWord(w){
+  return (w || "").toLowerCase().replace(/[.,!?;:"']/g, "");
+}
+
+function checkParagraph(original, typed){
+  const origWords = original.trim().split(/\s+/);
+  const typedWords = typed.trim().split(/\s+/).filter(Boolean);
+  const results = origWords.map((w, i) => {
+    const t = typedWords[i];
+    return { word: w, ok: !!t && normalizeWord(t) === normalizeWord(w) };
+  });
+  return { results, correctCount: results.filter(r => r.ok).length, total: origWords.length };
+}
+
+function renderTextWriting(key){
+  const text = TEXTS[key];
+  if (!textWriteState[key]) textWriteState[key] = { typed: "", checked: false, result: null };
+  const st = textWriteState[key];
+
+  const box = document.createElement("div");
+  box.className = "dictation-box";
+  box.style.textAlign = "left";
+  box.innerHTML = `
+    <p style="text-align:center;">Escucha el texto y escríbelo completo, tal como se dice:</p>
+    <p style="text-align:center;"><button class="btn secondary">🔊 Escuchar de nuevo</button></p>
+    <textarea rows="4" placeholder="Escribe el párrafo aquí..." autocomplete="off" spellcheck="false" style="width:100%;font-family:inherit;font-size:1rem;padding:10px;border-radius:6px;border:1px solid var(--rule);background:var(--bg-inset);color:var(--ink);"></textarea>
+    <div class="btn-row" style="justify-content:center;margin-top:10px;">
+      <button class="btn" id="checkParaBtn">Comprobar</button>
+      <button class="btn secondary" id="resetParaBtn">Intentar de nuevo</button>
+    </div>
+    <div id="paraResult" style="margin-top:14px;"></div>
+  `;
+  root.appendChild(box);
+
+  const textarea = box.querySelector("textarea");
+  textarea.value = st.typed;
+  textarea.disabled = st.checked;
+  textarea.oninput = () => { st.typed = textarea.value; };
+  box.querySelector(".btn.secondary").onclick = () => speak(text.paragraph, {rate: speechRate * 0.85});
+
+  const resultBox = box.querySelector("#paraResult");
+  function showResult(){
+    if (!st.checked || !st.result) { resultBox.innerHTML = ""; return; }
+    const pct = Math.round((st.result.correctCount / st.result.total) * 100);
+    const words = st.result.results.map(r =>
+      `<span style="color:${r.ok ? 'var(--primary)' : 'var(--wrong)'};font-weight:${r.ok?'400':'600'};${r.ok?'':'text-decoration: underline wavy var(--wrong);'}">${r.word}</span>`
+    ).join(" ");
+    resultBox.innerHTML = `
+      <div class="feedback ${pct >= 90 ? 'correct' : 'wrong'}" style="display:block;">
+        ${pct}% correcto (${st.result.correctCount}/${st.result.total} palabras) ${pct >= 90 ? '¡Muy bien! 🎉' : ''}
+      </div>
+      <p style="margin-top:12px;line-height:1.7;">${words}</p>
+      <p style="margin-top:10px;font-size:0.85rem;color:var(--ink-soft);">Texto original: "${text.paragraph}"</p>
+    `;
+  }
+
+  box.querySelector("#checkParaBtn").onclick = () => {
+    if (st.checked) return;
+    st.result = checkParagraph(text.paragraph, textarea.value);
+    st.checked = true;
+    textarea.disabled = true;
+    showResult();
+  };
+  box.querySelector("#resetParaBtn").onclick = () => {
+    textWriteState[key] = { typed: "", checked: false, result: null };
+    render();
+  };
+
+  showResult();
 }
 
 /* ---------- GENERIC WORD TAB (flashcards + dictation) ---------- */
