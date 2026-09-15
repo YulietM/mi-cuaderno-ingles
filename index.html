@@ -66,6 +66,15 @@
 
   * { box-sizing: border-box; }
   html, body { margin: 0; padding: 0; }
+  button {
+    transition: background-color .15s ease, border-color .15s ease, color .15s ease, transform .08s ease, box-shadow .15s ease;
+  }
+  button:active { transform: scale(0.96); }
+  button:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+  }
+  button:disabled:active { transform: none; }
   body {
     background: var(--bg);
     color: var(--ink);
@@ -115,7 +124,38 @@
     font-size: 1.05rem;
   }
 
-  #authBadge { white-space: normal; }
+  .visually-hidden {
+    position: absolute;
+    left: -9999px;
+    top: -9999px;
+  }
+
+  .user-corner {
+    position: fixed;
+    top: 14px;
+    right: 14px;
+    z-index: 200;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border-radius: 50%;
+    border: 2px solid var(--bg-card);
+    background: var(--bg-card);
+    box-shadow: 0 2px 10px var(--shadow);
+    cursor: pointer;
+    overflow: hidden;
+    display: none;
+    align-items: center;
+    justify-content: center;
+  }
+  .user-corner img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .user-corner:hover { border-color: var(--primary); }
+  .user-corner:active { transform: scale(0.95); }
 
   .login-gate {
     position: fixed;
@@ -166,53 +206,6 @@
     opacity: 0.8;
     margin: 0 !important;
   }
-  .auth-btn {
-    font-family: 'Work Sans', system-ui, sans-serif;
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: #fff;
-    background: var(--primary);
-    border: none;
-    border-radius: 4px;
-    padding: 7px 12px;
-    cursor: pointer;
-  }
-  .auth-btn:hover { background: var(--primary-dark); }
-  .auth-btn-ghost {
-    background: transparent;
-    color: var(--ink-soft);
-    border: 1px solid var(--rule);
-    padding: 4px 10px;
-    font-size: 0.78rem;
-  }
-  .user-info { display: flex; align-items: center; gap: 8px; }
-  .user-info img {
-    width: 26px; height: 26px;
-    border-radius: 50%;
-    object-fit: cover;
-    background: var(--bg-inset);
-  }
-  .user-info span {
-    font-weight: 600;
-    color: var(--ink);
-    max-width: 140px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-  .user-info-btn {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    background: none;
-    border: none;
-    padding: 2px 4px;
-    margin: -2px -4px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-family: inherit;
-  }
-  .user-info-btn:hover { background: var(--bg-inset); }
 
   .profile-header {
     display: flex;
@@ -298,12 +291,17 @@
 
   nav.tabs {
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     gap: 4px;
     margin-bottom: 22px;
     border-bottom: 1px solid var(--rule);
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
   }
+  nav.tabs::-webkit-scrollbar { display: none; }
   nav.tabs button {
+    flex: 0 0 auto;
     font-family: 'Work Sans', sans-serif;
     font-size: 0.88rem;
     font-weight: 600;
@@ -311,6 +309,7 @@
     border: none;
     color: var(--ink-soft);
     padding: 10px 14px 12px;
+    min-height: 40px;
     cursor: pointer;
     white-space: nowrap;
     border-bottom: 3px solid transparent;
@@ -320,6 +319,8 @@
     color: var(--primary);
     border-bottom-color: var(--primary);
   }
+  nav.tabs button:hover { color: var(--primary); background: var(--bg-inset); }
+  nav.tabs button.active:hover { background: none; }
 
   .panel {
     background: var(--bg-card);
@@ -345,18 +346,19 @@
     font-size: 0.88rem;
     border: none;
     border-radius: 5px;
-    padding: 10px 16px;
+    padding: 11px 18px;
+    min-height: 42px;
     cursor: pointer;
     background: var(--primary);
     color: #fff;
   }
-  .btn:hover { background: var(--primary-dark); }
+  .btn:hover { background: var(--primary-dark); box-shadow: 0 2px 8px var(--shadow); }
   .btn.secondary {
     background: var(--bg-inset);
     color: var(--ink);
   }
-  .btn.secondary:hover { background: var(--rule); }
-  .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .btn.secondary:hover { background: var(--rule); box-shadow: none; }
+  .btn:disabled { opacity: 0.5; cursor: not-allowed; box-shadow: none; }
   .btn-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 14px; }
 
   .subnav { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; }
@@ -364,32 +366,38 @@
     font-family: 'Work Sans', sans-serif;
     font-size: 0.82rem;
     font-weight: 600;
-    padding: 7px 12px;
+    padding: 9px 14px;
+    min-height: 38px;
     border-radius: 999px;
     border: 1px solid var(--rule);
     background: var(--bg-inset);
     color: var(--ink-soft);
     cursor: pointer;
   }
+  .subnav button:hover { border-color: var(--primary); color: var(--primary); }
   .subnav button.active {
     background: var(--primary);
     border-color: var(--primary);
     color: #fff;
   }
+  .subnav button.active:hover { color: #fff; }
 
-  .mode-toggle { display: flex; gap: 6px; margin-bottom: 18px; }
+  .mode-toggle { display: flex; gap: 6px; margin-bottom: 18px; flex-wrap: wrap; }
   .mode-toggle button {
     flex: 1;
+    min-width: 120px;
     font-family: 'Work Sans', sans-serif;
     font-size: 0.85rem;
     font-weight: 600;
-    padding: 9px;
+    padding: 10px;
+    min-height: 40px;
     border-radius: 5px;
     border: 1px solid var(--rule);
     background: var(--bg-inset);
     color: var(--ink-soft);
     cursor: pointer;
   }
+  .mode-toggle button:hover { border-color: var(--accent); color: var(--ink); }
   .mode-toggle button.active {
     background: var(--accent-soft);
     border-color: var(--accent);
@@ -582,6 +590,10 @@
 </style>
 </head>
 <body>
+<button id="userCorner" class="user-corner" type="button" style="display:none;" title="Mi perfil" aria-label="Mi perfil">
+  <img id="cornerPhoto" alt="" referrerpolicy="no-referrer">
+</button>
+<div id="googleBtnContainer" class="visually-hidden"></div>
 <div id="loginGate" class="login-gate" style="display:none;">
   <div class="login-card">
     <img src="icon-192.png" alt="" class="login-icon">
@@ -599,16 +611,6 @@
     </div>
     <div class="score-badge">Mejor puntaje dictado: <strong id="bestScore">0</strong></div>
     <div class="score-badge">📌 Para repasar: <strong id="repasoCount">0</strong></div>
-    <div class="score-badge" id="authBadge">
-      <div id="googleBtnContainer"></div>
-      <div id="userInfo" class="user-info" style="display:none;">
-        <button id="profileBtn" class="user-info-btn" type="button">
-          <img id="userPhoto" alt="" referrerpolicy="no-referrer">
-          <span id="userName"></span>
-        </button>
-        <button id="signOutBtn" class="auth-btn auth-btn-ghost" type="button">Salir</button>
-      </div>
-    </div>
   </header>
 
   <div class="voice-controls">
@@ -1172,10 +1174,8 @@ const loginGate = document.getElementById("loginGate");
 const appWrap = document.getElementById("appWrap");
 const gateBtnContainer = document.getElementById("gateBtnContainer");
 const googleBtnContainer = document.getElementById("googleBtnContainer");
-const userInfoEl = document.getElementById("userInfo");
-const userNameEl = document.getElementById("userName");
-const userPhotoEl = document.getElementById("userPhoto");
-const signOutBtn = document.getElementById("signOutBtn");
+const userCorner = document.getElementById("userCorner");
+const cornerPhoto = document.getElementById("cornerPhoto");
 
 let googleIdToken = null;
 let cloudSyncTimer = null;
@@ -1230,10 +1230,10 @@ function queueCloudSync(){
 
 function showSignedIn(profile, idToken){
   if (idToken) googleIdToken = idToken;
-  googleBtnContainer.style.display = "none";
-  userInfoEl.style.display = "flex";
-  userNameEl.textContent = profile.name || profile.email || "Cuenta";
-  userPhotoEl.src = profile.picture || "icon-192.png";
+  userCorner.style.display = "flex";
+  userCorner.title = profile.name || profile.email || "Mi perfil";
+  userCorner.setAttribute("aria-label", "Mi perfil — " + (profile.name || profile.email || ""));
+  cornerPhoto.src = profile.picture || "icon-192.png";
   try {
     localStorage.setItem("mi_google_profile", JSON.stringify({
       name: profile.name, email: profile.email, picture: profile.picture
@@ -1245,8 +1245,7 @@ function showSignedIn(profile, idToken){
 
 function showSignedOut(){
   googleIdToken = null;
-  googleBtnContainer.style.display = "block";
-  userInfoEl.style.display = "none";
+  userCorner.style.display = "none";
   try { localStorage.removeItem("mi_google_profile"); } catch(e){}
   showGate();
 }
@@ -1259,24 +1258,15 @@ if (googleLoginEnabled) {
     catch(e){ return null; }
   })();
   if (cachedProfile) {
-    userInfoEl.style.display = "flex";
-    userNameEl.textContent = cachedProfile.name || cachedProfile.email || "Cuenta";
-    userPhotoEl.src = cachedProfile.picture || "icon-192.png";
-    googleBtnContainer.style.display = "none";
+    userCorner.style.display = "flex";
+    userCorner.title = cachedProfile.name || cachedProfile.email || "Mi perfil";
+    cornerPhoto.src = cachedProfile.picture || "icon-192.png";
     openApp();
   } else {
     showGate();
   }
 
-  signOutBtn.addEventListener("click", () => {
-    if (window.google && google.accounts && google.accounts.id) {
-      google.accounts.id.disableAutoSelect();
-    }
-    showSignedOut();
-  });
-
-  const profileBtn = document.getElementById("profileBtn");
-  if (profileBtn) profileBtn.addEventListener("click", () => { currentTab = "profile"; render(); });
+  userCorner.addEventListener("click", () => { currentTab = "profile"; render(); });
 
   (function waitForGoogleScript(){
     if (!window.google || !google.accounts || !google.accounts.id) {
@@ -1301,9 +1291,6 @@ if (googleLoginEnabled) {
     // tanto si ya estabas logueado como si Google recuerda tu cuenta.
     google.accounts.id.prompt();
   })();
-} else {
-  const authBadge = document.getElementById("authBadge");
-  if (authBadge) authBadge.style.display = "none";
 }
 
 function renderProfile(){
@@ -1463,7 +1450,13 @@ TABS.forEach(t => {
 });
 
 function updateTabNav(){
-  [...tabNav.children].forEach(b => b.classList.toggle("active", b.dataset.id === currentTab));
+  let activeBtn = null;
+  [...tabNav.children].forEach(b => {
+    const isActive = b.dataset.id === currentTab;
+    b.classList.toggle("active", isActive);
+    if (isActive) activeBtn = b;
+  });
+  if (activeBtn) activeBtn.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
 }
 
 const root = document.getElementById("panelRoot");
