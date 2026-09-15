@@ -200,6 +200,58 @@
     text-overflow: ellipsis;
     white-space: nowrap;
   }
+  .user-info-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: none;
+    border: none;
+    padding: 2px 4px;
+    margin: -2px -4px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .user-info-btn:hover { background: var(--bg-inset); }
+
+  .profile-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+  .profile-header img {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    object-fit: cover;
+    background: var(--bg-inset);
+  }
+  .profile-header h2 { margin: 0 0 2px; }
+  .profile-header .email { color: var(--ink-soft); font-size: 0.85rem; }
+  .stat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 10px;
+    margin: 18px 0;
+  }
+  .stat-card {
+    background: var(--bg-card);
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    padding: 14px;
+    text-align: center;
+  }
+  .stat-card .n {
+    font-family: 'Fraunces', serif;
+    font-size: 1.8rem;
+    color: var(--primary);
+    display: block;
+  }
+  .stat-card .l {
+    font-size: 0.8rem;
+    color: var(--ink-soft);
+  }
 
   .voice-controls {
     display: flex;
@@ -550,8 +602,10 @@
     <div class="score-badge" id="authBadge">
       <div id="googleBtnContainer"></div>
       <div id="userInfo" class="user-info" style="display:none;">
-        <img id="userPhoto" alt="" referrerpolicy="no-referrer">
-        <span id="userName"></span>
+        <button id="profileBtn" class="user-info-btn" type="button">
+          <img id="userPhoto" alt="" referrerpolicy="no-referrer">
+          <span id="userName"></span>
+        </button>
         <button id="signOutBtn" class="auth-btn auth-btn-ghost" type="button">Salir</button>
       </div>
     </div>
@@ -1221,6 +1275,9 @@ if (googleLoginEnabled) {
     showSignedOut();
   });
 
+  const profileBtn = document.getElementById("profileBtn");
+  if (profileBtn) profileBtn.addEventListener("click", () => { currentTab = "profile"; render(); });
+
   (function waitForGoogleScript(){
     if (!window.google || !google.accounts || !google.accounts.id) {
       setTimeout(waitForGoogleScript, 50);
@@ -1247,6 +1304,49 @@ if (googleLoginEnabled) {
 } else {
   const authBadge = document.getElementById("authBadge");
   if (authBadge) authBadge.style.display = "none";
+}
+
+function renderProfile(){
+  let profile = null;
+  try { profile = JSON.parse(localStorage.getItem("mi_google_profile") || "null"); } catch(e){}
+  if (!profile) { showGate(); return; }
+
+  const header = document.createElement("div");
+  header.className = "profile-header";
+  header.innerHTML = `
+    <img src="${profile.picture || 'icon-192.png'}" alt="" referrerpolicy="no-referrer">
+    <div>
+      <h2>${profile.name || 'Mi cuenta'}</h2>
+      <div class="email">${profile.email || ''}</div>
+    </div>
+  `;
+  root.appendChild(header);
+
+  const stats = document.createElement("div");
+  stats.className = "stat-grid";
+  stats.innerHTML = `
+    <div class="stat-card"><span class="n">${vocab.length}</span><span class="l">Palabras en Mi Vocabulario</span></div>
+    <div class="stat-card"><span class="n">${loadBest()}</span><span class="l">Mejor puntaje dictado</span></div>
+    <div class="stat-card"><span class="n">${repaso.length}</span><span class="l">📌 Palabras para repasar</span></div>
+  `;
+  root.appendChild(stats);
+
+  const note = document.createElement("p");
+  note.style.cssText = "font-size:0.85rem;color:var(--ink-soft);margin:0 0 22px;";
+  note.textContent = "Este progreso viaja con tu cuenta: es el mismo en cualquier dispositivo donde inicies sesión con este correo.";
+  root.appendChild(note);
+
+  const btn = document.createElement("button");
+  btn.className = "btn secondary";
+  btn.textContent = "Cerrar sesión";
+  btn.onclick = () => {
+    if (window.google && google.accounts && google.accounts.id) {
+      google.accounts.id.disableAutoSelect();
+    }
+    currentTab = "abc";
+    showSignedOut();
+  };
+  root.appendChild(btn);
 }
 
 /* ---------- SPEECH ---------- */
@@ -1349,7 +1449,8 @@ const TABS = [
   {id:"sentences", label:"Frases y Textos"},
   {id:"vocab", label:"Mi Vocabulario"},
   {id:"repaso", label:"📌 Repaso"},
-  {id:"dictado", label:"Dictado General"}
+  {id:"dictado", label:"Dictado General"},
+  ...(googleLoginEnabled ? [{id:"profile", label:"Mi Perfil"}] : [])
 ];
 let currentTab = "abc";
 const tabNav = document.getElementById("tabNav");
@@ -1379,6 +1480,7 @@ function render(){
   else if (currentTab === "vocab") renderVocab();
   else if (currentTab === "repaso") renderRepaso();
   else if (currentTab === "dictado") renderDictadoGeneral();
+  else if (currentTab === "profile") renderProfile();
 }
 
 /* ---------- ABC TAB ---------- */
