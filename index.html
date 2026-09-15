@@ -1,0 +1,1731 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mi Cuaderno de Inglés</title>
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Mi Cuaderno">
+<meta name="theme-color" content="#1F5D50">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #EEF2EE;
+    --bg-card: #FFFFFF;
+    --bg-inset: #E4EAE4;
+    --ink: #17241F;
+    --ink-soft: #4B5A53;
+    --primary: #1F5D50;
+    --primary-dark: #163F37;
+    --accent: #D79A1E;
+    --accent-soft: #F3E3BE;
+    --wrong: #C1462F;
+    --wrong-soft: #F5DBD3;
+    --rule: #C9D3C7;
+    --shadow: rgba(23, 36, 31, 0.10);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #121C18;
+      --bg-card: #1B2823;
+      --bg-inset: #223229;
+      --ink: #E9F0EA;
+      --ink-soft: #A9BAB0;
+      --primary: #6FCB9F;
+      --primary-dark: #8FE0B7;
+      --accent: #F0BE55;
+      --accent-soft: #3A2F1A;
+      --wrong: #F08C74;
+      --wrong-soft: #3A211C;
+      --rule: #33443B;
+      --shadow: rgba(0, 0, 0, 0.35);
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #121C18;
+    --bg-card: #1B2823;
+    --bg-inset: #223229;
+    --ink: #E9F0EA;
+    --ink-soft: #A9BAB0;
+    --primary: #6FCB9F;
+    --primary-dark: #8FE0B7;
+    --accent: #F0BE55;
+    --accent-soft: #3A2F1A;
+    --wrong: #F08C74;
+    --wrong-soft: #3A211C;
+    --rule: #33443B;
+    --shadow: rgba(0, 0, 0, 0.35);
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Work Sans', system-ui, sans-serif;
+    line-height: 1.45;
+    min-height: 100vh;
+  }
+  .wrap {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 28px 18px 60px;
+  }
+  header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 14px;
+    margin-bottom: 22px;
+    flex-wrap: wrap;
+    border-bottom: 2px solid var(--rule);
+    padding-bottom: 16px;
+  }
+  h1 {
+    font-family: 'Fraunces', serif;
+    font-weight: 700;
+    font-size: 1.9rem;
+    margin: 0 0 4px;
+    letter-spacing: -0.01em;
+  }
+  header p {
+    margin: 0;
+    color: var(--ink-soft);
+    font-size: 0.95rem;
+  }
+  .score-badge {
+    background: var(--bg-card);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    padding: 8px 14px;
+    font-size: 0.85rem;
+    color: var(--ink-soft);
+    white-space: nowrap;
+  }
+  .score-badge strong {
+    color: var(--primary);
+    font-family: 'Fraunces', serif;
+    font-size: 1.05rem;
+  }
+
+  .voice-controls {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    flex-wrap: wrap;
+    background: var(--bg-inset);
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    padding: 10px 14px;
+    margin-bottom: 18px;
+    font-size: 0.85rem;
+  }
+  .vc-group { display: flex; align-items: center; gap: 8px; }
+  .vc-group label { color: var(--ink-soft); font-weight: 600; }
+  .voice-controls select {
+    font-family: 'Work Sans', sans-serif;
+    font-size: 0.85rem;
+    padding: 6px 9px;
+    border-radius: 5px;
+    border: 1px solid var(--rule);
+    background: var(--bg-card);
+    color: var(--ink);
+    max-width: 220px;
+  }
+  .speed-toggle { display: flex; gap: 4px; }
+  .speed-toggle button {
+    font-family: 'Work Sans', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 600;
+    padding: 6px 11px;
+    border-radius: 5px;
+    border: 1px solid var(--rule);
+    background: var(--bg-card);
+    color: var(--ink-soft);
+    cursor: pointer;
+  }
+  .speed-toggle button.active {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: #fff;
+  }
+  .voice-controls .btn { padding: 7px 12px; font-size: 0.82rem; }
+
+  nav.tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-bottom: 22px;
+    border-bottom: 1px solid var(--rule);
+  }
+  nav.tabs button {
+    font-family: 'Work Sans', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 600;
+    background: none;
+    border: none;
+    color: var(--ink-soft);
+    padding: 10px 14px 12px;
+    cursor: pointer;
+    white-space: nowrap;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -1px;
+  }
+  nav.tabs button.active {
+    color: var(--primary);
+    border-bottom-color: var(--primary);
+  }
+
+  .panel {
+    background: var(--bg-card);
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    padding: 22px;
+    box-shadow: 0 2px 10px var(--shadow);
+  }
+  .panel h2 {
+    font-family: 'Fraunces', serif;
+    font-size: 1.3rem;
+    margin: 0 0 6px;
+  }
+  .panel > p.lead {
+    color: var(--ink-soft);
+    margin: 0 0 18px;
+    font-size: 0.92rem;
+  }
+
+  .btn {
+    font-family: 'Work Sans', sans-serif;
+    font-weight: 600;
+    font-size: 0.88rem;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 16px;
+    cursor: pointer;
+    background: var(--primary);
+    color: #fff;
+  }
+  .btn:hover { background: var(--primary-dark); }
+  .btn.secondary {
+    background: var(--bg-inset);
+    color: var(--ink);
+  }
+  .btn.secondary:hover { background: var(--rule); }
+  .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .btn-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 14px; }
+
+  .subnav { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; }
+  .subnav button {
+    font-family: 'Work Sans', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 600;
+    padding: 7px 12px;
+    border-radius: 999px;
+    border: 1px solid var(--rule);
+    background: var(--bg-inset);
+    color: var(--ink-soft);
+    cursor: pointer;
+  }
+  .subnav button.active {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: #fff;
+  }
+
+  .mode-toggle { display: flex; gap: 6px; margin-bottom: 18px; }
+  .mode-toggle button {
+    flex: 1;
+    font-family: 'Work Sans', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 9px;
+    border-radius: 5px;
+    border: 1px solid var(--rule);
+    background: var(--bg-inset);
+    color: var(--ink-soft);
+    cursor: pointer;
+  }
+  .mode-toggle button.active {
+    background: var(--accent-soft);
+    border-color: var(--accent);
+    color: var(--ink);
+  }
+
+  /* Letter grid */
+  .letter-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(52px, 1fr));
+    gap: 8px;
+    margin-bottom: 18px;
+  }
+  .letter-grid button {
+    aspect-ratio: 1;
+    font-family: 'Fraunces', serif;
+    font-size: 1.3rem;
+    font-weight: 700;
+    border-radius: 6px;
+    border: 1px solid var(--rule);
+    background: var(--bg-inset);
+    color: var(--primary);
+    cursor: pointer;
+  }
+  .letter-grid button.active {
+    background: var(--primary);
+    color: #fff;
+    border-color: var(--primary);
+  }
+  .letter-detail {
+    background: var(--bg-inset);
+    border-radius: 6px;
+    padding: 16px;
+  }
+  .letter-detail .big-letter {
+    font-family: 'Fraunces', serif;
+    font-size: 2.6rem;
+    font-weight: 700;
+    color: var(--primary);
+    line-height: 1;
+  }
+  .row-line { display: flex; align-items: center; gap: 8px; margin: 6px 0; font-size: 0.95rem; flex-wrap: wrap; }
+  .row-line .label { color: var(--ink-soft); font-size: 0.82rem; min-width: 78px; }
+  .example-list { display: flex; flex-direction: column; gap: 6px; margin-top: 10px; }
+  .example-item {
+    display: flex; align-items: center; justify-content: space-between;
+    background: var(--bg-card); border-radius: 5px; padding: 8px 10px;
+    border: 1px solid var(--rule);
+  }
+  .example-item .word { font-weight: 600; }
+  .example-item .es { color: var(--ink-soft); font-size: 0.85rem; }
+
+  .speak-btn {
+    border: 1px solid var(--rule);
+    background: var(--bg-card);
+    color: var(--primary);
+    border-radius: 5px;
+    padding: 5px 9px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    line-height: 1;
+  }
+  .speak-btn:hover { background: var(--accent-soft); }
+
+  /* Flashcard */
+  .flashcard {
+    background: var(--bg-inset);
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    min-height: 170px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 24px;
+    cursor: pointer;
+    gap: 10px;
+  }
+  .flashcard .front {
+    font-family: 'Fraunces', serif;
+    font-size: 2rem;
+    font-weight: 700;
+  }
+  .flashcard .back {
+    font-size: 1.05rem;
+    color: var(--primary);
+    font-weight: 600;
+  }
+  .flashcard .hint { font-size: 0.78rem; color: var(--ink-soft); }
+  .progress-line { font-size: 0.82rem; color: var(--ink-soft); margin-bottom: 10px; }
+
+  /* Dictation */
+  .dictation-box { text-align: center; padding: 10px 0 4px; }
+  .dictation-box .big-speak {
+    background: var(--primary);
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 74px;
+    height: 74px;
+    font-size: 1.7rem;
+    cursor: pointer;
+    margin-bottom: 14px;
+  }
+  .dictation-box .big-speak:hover { background: var(--primary-dark); }
+  .dictation-box input[type="text"] {
+    font-family: 'Work Sans', sans-serif;
+    font-size: 1.1rem;
+    padding: 10px 12px;
+    border-radius: 6px;
+    border: 1px solid var(--rule);
+    width: 100%;
+    max-width: 320px;
+    background: var(--bg-card);
+    color: var(--ink);
+    text-align: center;
+  }
+  .feedback {
+    margin-top: 14px;
+    padding: 10px 14px;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    display: none;
+  }
+  .feedback.correct { background: var(--accent-soft); color: var(--ink); display: block; }
+  .feedback.wrong { background: var(--wrong-soft); color: var(--ink); display: block; }
+  .feedback strong { color: var(--primary); }
+
+  /* Quiz (letter sound) */
+  .quiz-options { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 16px; }
+  .quiz-options button {
+    font-family: 'Fraunces', serif;
+    font-size: 1.3rem;
+    font-weight: 700;
+    padding: 14px 0;
+    border-radius: 6px;
+    border: 1px solid var(--rule);
+    background: var(--bg-inset);
+    color: var(--ink);
+    cursor: pointer;
+  }
+  .quiz-options button.correct { background: var(--accent-soft); border-color: var(--accent); }
+  .quiz-options button.wrong { background: var(--wrong-soft); border-color: var(--wrong); }
+  .quiz-options button:disabled { cursor: default; }
+
+  /* Vocab list / form */
+  .vocab-form { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+  .vocab-form input {
+    flex: 1;
+    min-width: 130px;
+    font-family: 'Work Sans', sans-serif;
+    padding: 9px 11px;
+    border-radius: 5px;
+    border: 1px solid var(--rule);
+    background: var(--bg-card);
+    color: var(--ink);
+  }
+  .vocab-list { display: flex; flex-direction: column; gap: 6px; }
+  .vocab-list .vocab-item {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    background: var(--bg-inset); border-radius: 5px; padding: 9px 12px;
+  }
+  .vocab-list .vocab-item .words { display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; }
+  .vocab-list .en { font-weight: 600; }
+  .vocab-list .es { color: var(--ink-soft); font-size: 0.88rem; }
+  .del-btn { border: none; background: none; color: var(--wrong); cursor: pointer; font-size: 1rem; }
+  .empty-note { color: var(--ink-soft); font-size: 0.9rem; padding: 14px 0; }
+
+  /* Dictado general checkboxes */
+  .source-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px,1fr)); gap: 8px; margin-bottom: 16px; }
+  .source-grid label {
+    display: flex; align-items: center; gap: 8px;
+    background: var(--bg-inset); border-radius: 5px; padding: 8px 10px;
+    font-size: 0.88rem; cursor: pointer; border: 1px solid var(--rule);
+  }
+  .num-select { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; font-size: 0.9rem; }
+  .num-select select {
+    font-family: 'Work Sans', sans-serif;
+    padding: 6px 10px; border-radius: 5px; border: 1px solid var(--rule);
+    background: var(--bg-card); color: var(--ink);
+  }
+  .summary-list { margin-top: 14px; display: flex; flex-direction: column; gap: 6px; }
+  .summary-item { display: flex; justify-content: space-between; gap: 10px; padding: 7px 10px; border-radius: 5px; font-size: 0.88rem; }
+  .summary-item.ok { background: var(--accent-soft); }
+  .summary-item.bad { background: var(--wrong-soft); }
+
+  footer { text-align: center; color: var(--ink-soft); font-size: 0.8rem; margin-top: 26px; }
+  .end-score { font-family: 'Fraunces', serif; font-size: 1.7rem; color: var(--primary); text-align: center; margin: 10px 0; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Mi Cuaderno de Inglés</h1>
+      <p>Practica sonidos, palabras y escritura — un poco cada día.</p>
+    </div>
+    <div class="score-badge">Mejor puntaje dictado: <strong id="bestScore">0</strong></div>
+    <div class="score-badge">📌 Para repasar: <strong id="repasoCount">0</strong></div>
+  </header>
+
+  <div class="voice-controls">
+    <div class="vc-group">
+      <label for="voiceSelect">Voz</label>
+      <select id="voiceSelect"><option>Cargando voces…</option></select>
+    </div>
+    <div class="vc-group">
+      <label>Velocidad</label>
+      <div class="speed-toggle" id="speedToggle">
+        <button data-rate="0.95" class="active">Normal</button>
+        <button data-rate="0.6">🐢 Lento</button>
+      </div>
+    </div>
+    <button class="btn secondary" id="testVoiceBtn">🔊 Probar voz</button>
+  </div>
+
+  <nav class="tabs" id="tabNav"></nav>
+  <div class="panel" id="panelRoot"></div>
+
+  <footer>Toca 🔊 para escuchar cada palabra. Funciona mejor en Chrome o Safari con el sonido activado.</footer>
+</div>
+
+<script>
+/* ---------- DATA ---------- */
+const ALPHABET = [
+  {l:"A", name:"ei", sound:"a corta", examples:[["apple","manzana"],["cat","gato"],["hat","sombrero"]]},
+  {l:"B", name:"bi", sound:"b seca", examples:[["ball","pelota"],["boy","niño"],["big","grande"]]},
+  {l:"C", name:"si", sound:"k (a veces s)", examples:[["cat","gato"],["cup","taza"],["city","ciudad"]]},
+  {l:"D", name:"di", sound:"d seca", examples:[["dog","perro"],["day","día"],["red","rojo"]]},
+  {l:"E", name:"i", sound:"e corta", examples:[["egg","huevo"],["bed","cama"],["ten","diez"]]},
+  {l:"F", name:"ef", sound:"f soplada", examples:[["fish","pez"],["fun","diversión"],["leaf","hoja"]]},
+  {l:"G", name:"yi", sound:"g (a veces y)", examples:[["go","ir"],["big","grande"],["gem","gema"]]},
+  {l:"H", name:"eich", sound:"aire, como j suave", examples:[["hat","sombrero"],["house","casa"],["hot","caliente"]]},
+  {l:"I", name:"ai", sound:"i corta", examples:[["it","eso"],["sit","sentarse"],["big","grande"]]},
+  {l:"J", name:"yei", sound:"y / dch", examples:[["jump","saltar"],["job","trabajo"],["juice","jugo"]]},
+  {l:"K", name:"kei", sound:"k seca", examples:[["kite","cometa"],["key","llave"],["kid","niño"]]},
+  {l:"L", name:"el", sound:"l", examples:[["leg","pierna"],["lion","león"],["ball","pelota"]]},
+  {l:"M", name:"em", sound:"m", examples:[["man","hombre"],["moon","luna"],["mom","mamá"]]},
+  {l:"N", name:"en", sound:"n", examples:[["no","no"],["nine","nueve"],["sun","sol"]]},
+  {l:"O", name:"ou", sound:"o corta", examples:[["on","sobre"],["dog","perro"],["hot","caliente"]]},
+  {l:"P", name:"pi", sound:"p seca", examples:[["pen","lapicero"],["pig","cerdo"],["cup","taza"]]},
+  {l:"Q", name:"kiu", sound:"kw junto", examples:[["queen","reina"],["quick","rápido"],["quiz","examen corto"]]},
+  {l:"R", name:"ar", sound:"r suave", examples:[["red","rojo"],["run","correr"],["car","carro"]]},
+  {l:"S", name:"es", sound:"s", examples:[["sun","sol"],["sit","sentarse"],["bus","autobús"]]},
+  {l:"T", name:"ti", sound:"t seca", examples:[["top","trompo"],["ten","diez"],["cat","gato"]]},
+  {l:"U", name:"iu", sound:"a corta (uh)", examples:[["up","arriba"],["cup","taza"],["sun","sol"]]},
+  {l:"V", name:"vi", sound:"v labio-diente", examples:[["van","camioneta"],["five","cinco"],["love","amor"]]},
+  {l:"W", name:"dabliu", sound:"u rápida", examples:[["water","agua"],["we","nosotros"],["win","ganar"]]},
+  {l:"X", name:"eks", sound:"ks", examples:[["box","caja"],["fox","zorro"],["six","seis"]]},
+  {l:"Y", name:"uai", sound:"y", examples:[["yes","sí"],["you","tú"],["yellow","amarillo"]]},
+  {l:"Z", name:"zi", sound:"z (zumbido)", examples:[["zoo","zoológico"],["zero","cero"],["zebra","cebra"]]}
+];
+
+function pairs(arr){ return arr.map(([en,es]) => ({en, es})); }
+
+const CVC = pairs([
+  ["cat","gato"],["dog","perro"],["sun","sol"],["big","grande"],["red","rojo"],
+  ["hot","caliente"],["bed","cama"],["run","correr"],["pig","cerdo"],["pen","lapicero"],
+  ["top","trompo"],["kid","niño"],["man","hombre"],["mom","mamá"],["fan","abanico"],
+  ["hat","sombrero"],["sit","sentarse"],["six","seis"],["box","caja"],["van","camioneta"],
+  ["win","ganar"],["fun","diversión"],["cup","taza"],["bus","autobús"],["log","tronco"],
+  ["mud","barro"],["gas","gasolina"],["jam","mermelada"],["lip","labio"],["net","red / malla"]
+]);
+
+const PATTERNS = {
+  th: {label:"th", soundHint:"thh", items: pairs([["think","pensar"],["three","tres"],["mouth","boca"],["this","esto"],["that","eso"],["mother","madre"]])},
+  sh: {label:"sh", soundHint:"shh", items: pairs([["she","ella"],["fish","pez"],["wash","lavar"],["shop","tienda"],["ship","barco"],["shoe","zapato"]])},
+  ch: {label:"ch", soundHint:"ch", items: pairs([["chair","silla"],["teacher","maestro/a"],["lunch","almuerzo"],["chicken","pollo"],["church","iglesia"],["beach","playa"]])},
+  wh: {label:"wh", soundHint:"wuh", items: pairs([["what","qué"],["when","cuándo"],["where","dónde"],["why","por qué"],["white","blanco"],["wheel","rueda"]])},
+  tion: {label:"-tion/-sion", soundHint:"shun", items: pairs([["nation","nación"],["station","estación"],["television","televisión"],["decision","decisión"],["action","acción"],["vacation","vacaciones"]])},
+  ight: {label:"-ight", soundHint:"ite", items: pairs([["light","luz"],["night","noche"],["right","correcto"],["fight","pelea"],["bright","brillante"],["flight","vuelo"]])},
+  silente: {label:"vocal + e muda", soundHint:null, comparePairs:[["cap","cape"],["kit","kite"],["cut","cute"]], items: pairs([["cake","pastel"],["bike","bicicleta"],["cute","lindo"],["home","casa"],["name","nombre"],["rope","cuerda"]])},
+  ough: {label:"-ough (excepciones)", soundHint:null, items: pairs([["through","a través"],["though","aunque"],["tough","duro"],["cough","tos"],["enough","suficiente"]])}
+};
+
+const SIGHT = pairs([
+  ["the","el / la"],["said","dijo"],["was","era / estaba"],["of","de"],["one","uno"],
+  ["come","venir"],["you","tú"],["they","ellos"],["what","qué"],["some","algunos"],
+  ["have","tener"],["do","hacer"],["does","hace"],["who","quién"],["people","gente"]
+]);
+
+const GRAMMAR = {
+  demonstratives: {
+    label: "This / That / These / Those",
+    intro: "Se usan para señalar algo. Depende de dos cosas: si está cerca o lejos, y si es una cosa o varias.",
+    practice: pairs([
+      ["This is my pen.","Este es mi lapicero. (this)"],
+      ["That is your car.","Ese es tu carro. (that)"],
+      ["These are my keys.","Estas son mis llaves. (these)"],
+      ["Those are your shoes.","Esos son tus zapatos. (those)"]
+    ]),
+    rows: [
+      ["this", "esto / esta (singular, cerca)", "This is my pen. (Este es mi lapicero.)"],
+      ["that", "eso / esa (singular, lejos)", "That is your car. (Ese es tu carro.)"],
+      ["these", "estos / estas (plural, cerca)", "These are my keys. (Estas son mis llaves.)"],
+      ["those", "esos / esas (plural, lejos)", "Those are your shoes. (Esos son tus zapatos.)"]
+    ],
+    quiz: [
+      {prompt:"___ is my phone. (el teléfono está en tu mano)", options:["This","That","These","Those"], correct:"This"},
+      {prompt:"___ are my friends. (están allá, lejos)", options:["This","That","These","Those"], correct:"Those"},
+      {prompt:"___ book on the table next to you is mine.", options:["This","That","These","Those"], correct:"That"},
+      {prompt:"___ apples in my hand are fresh.", options:["This","That","These","Those"], correct:"These"},
+      {prompt:"Can you pass me ___ cup? (está cerca de ti, una sola)", options:["this","that","these","those"], correct:"that"},
+      {prompt:"___ shoes I'm wearing are new.", options:["This","That","These","Those"], correct:"These"}
+    ]
+  },
+  contractions: {
+    label: "Contracciones",
+    intro: "Unen dos palabras en una, quitando letras y usando un apóstrofe ( ' ). Se usan todo el tiempo al hablar.",
+    practice: pairs([
+      ["I'm","contracción de: I am"],
+      ["you're","contracción de: you are"],
+      ["he's","contracción de: he is"],
+      ["she's","contracción de: she is"],
+      ["it's","contracción de: it is"],
+      ["we're","contracción de: we are"],
+      ["they're","contracción de: they are"],
+      ["isn't","contracción de: is not"],
+      ["aren't","contracción de: are not"],
+      ["don't","contracción de: do not"],
+      ["doesn't","contracción de: does not"],
+      ["didn't","contracción de: did not"],
+      ["can't","contracción de: cannot"],
+      ["won't","contracción de: will not"],
+      ["I've","contracción de: I have"],
+      ["I'll","contracción de: I will"]
+    ]),
+    rows: [
+      ["I am → I'm", "I'm happy.", "Estoy feliz."],
+      ["you are → you're", "You're right.", "Tienes razón."],
+      ["he is → he's", "He's tired.", "Está cansado."],
+      ["she is → she's", "She's my sister.", "Es mi hermana."],
+      ["it is → it's", "It's raining.", "Está lloviendo."],
+      ["we are → we're", "We're ready.", "Estamos listos."],
+      ["they are → they're", "They're here.", "Ellos están aquí."],
+      ["is not → isn't", "It isn't cold.", "No hace frío."],
+      ["are not → aren't", "We aren't late.", "No estamos tarde."],
+      ["do not → don't", "I don't know.", "No sé."],
+      ["does not → doesn't", "She doesn't work.", "Ella no trabaja."],
+      ["did not → didn't", "I didn't go.", "No fui."],
+      ["cannot → can't", "I can't swim.", "No sé nadar."],
+      ["will not → won't", "I won't be late.", "No llegaré tarde."],
+      ["I have → I've", "I've finished.", "Ya terminé."],
+      ["I will → I'll", "I'll call you.", "Te llamaré."],
+      ["⚠ Excepción: will not → won't", "No sigue el patrón normal (no es 'willn't').", "I won't be there."],
+      ["⚠ Excepción: I am not → no tiene forma corta estándar", "Se dice 'I'm not', pero en pregunta se usa 'aren't I?' (no 'amn't I').", "I'm not sure. / Aren't I invited?"]
+    ],
+    quiz: [
+      {prompt:"I ___ (am not) ready yet.", options:["ain't","amn't","'m not","isn't"], correct:"'m not"},
+      {prompt:"She ___ (does not) like coffee.", options:["don't","doesn't","isn't","won't"], correct:"doesn't"},
+      {prompt:"They ___ (are) my classmates.", options:["they's","they're","their","there"], correct:"they're"},
+      {prompt:"I ___ (will) help you tomorrow.", options:["I'l","I'll","Ill","I'd"], correct:"I'll"},
+      {prompt:"He ___ (cannot) come today.", options:["can't","cant","can not't","couldn't"], correct:"can't"},
+      {prompt:"We ___ (did not) see the movie.", options:["didn't","doesn't","don't","weren't"], correct:"didn't"}
+    ]
+  },
+  negatives: {
+    label: "Oraciones negativas",
+    intro: "La estructura cambia según el verbo. Con verbos normales usas do/does/did + not. Con to be, usas am/is/are + not.",
+    practice: pairs([
+      ["I don't like coffee.","No me gusta el café."],
+      ["She doesn't work here.","Ella no trabaja aquí."],
+      ["I didn't go to school.","No fui a la escuela."],
+      ["I am not tired.","No estoy cansado."],
+      ["He isn't happy.","Él no está feliz."],
+      ["They aren't home.","Ellos no están en casa."],
+      ["He can't swim.","Él no sabe nadar."],
+      ["I won't wait.","No voy a esperar."]
+    ]),
+    rows: [
+      ["Verbos normales (presente)", "subject + don't/doesn't + verbo base", "I don't like coffee. / She doesn't work here."],
+      ["Verbos normales (pasado)", "subject + didn't + verbo base", "I didn't go to school."],
+      ["Verbo to be", "subject + am/is/are + not", "I am not tired. / He isn't happy. / They aren't home."],
+      ["Verbos modales", "subject + can't / won't / shouldn't + verbo base", "He can't swim. / I won't wait."]
+    ],
+    quiz: [
+      {prompt:"I ___ like spicy food.", options:["don't","doesn't","am not","isn't"], correct:"don't"},
+      {prompt:"She ___ speak French.", options:["don't","doesn't","isn't","not"], correct:"doesn't"},
+      {prompt:"We ___ tired.", options:["don't","doesn't","aren't","isn't"], correct:"aren't"},
+      {prompt:"He ___ finish his homework yesterday.", options:["doesn't","didn't","don't","wasn't"], correct:"didn't"},
+      {prompt:"They ___ swim in the ocean.", options:["can't","doesn't","isn't","aren't not"], correct:"can't"},
+      {prompt:"It ___ raining right now.", options:["don't","doesn't","isn't","aren't"], correct:"isn't"}
+    ]
+  },
+  whwords: {
+    label: "Preguntas Wh-",
+    intro: "Cada palabra pregunta algo distinto. Elegir la correcta depende de qué información quieres obtener.",
+    practice: pairs([
+      ["What is your name?","pregunta con: qué"],
+      ["Which color do you prefer?","pregunta con: cuál"],
+      ["Who is your teacher?","pregunta con: quién"],
+      ["Why are you late?","pregunta con: por qué"],
+      ["When is your birthday?","pregunta con: cuándo"],
+      ["Where do you live?","pregunta con: dónde"],
+      ["How do you get to work?","pregunta con: cómo"]
+    ]),
+    rows: [
+      ["what", "qué (cosa o información)", "What is your name?"],
+      ["which", "cuál (elegir entre opciones específicas)", "Which color do you prefer, red or blue?"],
+      ["who", "quién (persona)", "Who is your teacher?"],
+      ["why", "por qué (razón)", "Why are you late?"],
+      ["when", "cuándo (tiempo)", "When is your birthday?"],
+      ["where", "dónde (lugar)", "Where do you live?"],
+      ["how", "cómo (manera) / how much-many (cantidad)", "How do you get to work?"]
+    ],
+    quiz: [
+      {prompt:"___ is your favorite color?", options:["What","Who","Where","Why"], correct:"What"},
+      {prompt:"___ do you want, the red one or the blue one?", options:["What","Which","Who","When"], correct:"Which"},
+      {prompt:"___ ate my sandwich?", options:["What","Which","Who","How"], correct:"Who"},
+      {prompt:"___ were you late this morning?", options:["Why","Where","Who","What"], correct:"Why"},
+      {prompt:"___ does the movie start?", options:["Where","When","What","Who"], correct:"When"},
+      {prompt:"___ is the nearest bank?", options:["When","Why","Where","Who"], correct:"Where"},
+      {prompt:"___ do you spell your name?", options:["How","What","Which","Why"], correct:"How"}
+    ]
+  },
+  plurals: {
+    label: "Singular y Plural",
+    intro: "La mayoría de palabras solo agregan -s. Pero hay reglas para terminaciones especiales, y algunas palabras cambian por completo.",
+    practice: pairs([
+      ["cats","plural de: cat"],
+      ["boxes","plural de: box"],
+      ["babies","plural de: baby"],
+      ["boys","plural de: boy"],
+      ["leaves","plural de: leaf"],
+      ["men","plural de: man"],
+      ["children","plural de: child"],
+      ["people","plural de: person"],
+      ["sheep","plural de: sheep (no cambia)"]
+    ]),
+    rows: [
+      ["Regla general: +s", "cat → cats, book → books", ""],
+      ["Termina en s, x, z, ch, sh: +es", "box → boxes, watch → watches, bus → buses", ""],
+      ["Consonante + y: y → ies", "baby → babies, city → cities", ""],
+      ["Vocal + y: solo +s", "boy → boys, day → days", ""],
+      ["Termina en f / fe: → ves", "leaf → leaves, knife → knives", ""],
+      ["Irregulares (se memorizan)", "man → men, woman → women, child → children, foot → feet, mouse → mice, person → people", ""],
+      ["⚠ Excepción: no cambian en plural", "sheep → sheep, fish → fish, deer → deer (igual en singular y plural)", ""],
+      ["⚠ Excepción: solo existen en plural", "pants, scissors, glasses (siempre se usan como plural, aunque sea un solo objeto)", ""]
+    ],
+    quiz: [
+      {prompt:"box → ?", options:["boxs","boxes","boxies","box's"], correct:"boxes"},
+      {prompt:"baby → ?", options:["babys","babies","babyes","baby's"], correct:"babies"},
+      {prompt:"child → ?", options:["childs","childes","children","childrens"], correct:"children"},
+      {prompt:"leaf → ?", options:["leafs","leaves","leafes","leafies"], correct:"leaves"},
+      {prompt:"boy → ?", options:["boies","boys","boyes","boy's"], correct:"boys"},
+      {prompt:"man → ?", options:["mans","manes","men","mens"], correct:"men"},
+      {prompt:"city → ?", options:["citys","cities","cityes","city's"], correct:"cities"}
+    ]
+  },
+  possessives: {
+    label: "Posesivos",
+    intro: "Muestran a quién le pertenece algo. Hay dos formas: apóstrofe con 's, o palabras posesivas (adjetivos y pronombres).",
+    practice: pairs([
+      ["This is my book.","posesivo: mi"],
+      ["Is this pen yours?","posesivo: tuyo"],
+      ["That is his car.","posesivo: de él"],
+      ["Their dog is friendly.","posesivo: de ellos"],
+      ["Anna's book","el libro de Anna"],
+      ["the students' books","los libros de los estudiantes"],
+      ["The children's toys","los juguetes de los niños"]
+    ]),
+    rows: [
+      ["'s (singular)", "de alguien (una persona)", "Anna's book (el libro de Anna)"],
+      ["s' (plural terminado en s)", "de varias personas", "the students' books (los libros de los estudiantes)"],
+      ["Adjetivos posesivos", "my, your, his, her, its, our, their", "This is my house."],
+      ["Pronombres posesivos", "mine, yours, his, hers, its, ours, theirs", "This house is mine."],
+      ["⚠ Excepción: plurales irregulares + posesivo", "Se agrega 's normal, no solo el apóstrofe: children's toys, men's shoes", "The children's toys are here."],
+      ["⚠ Excepción: 'its' sin apóstrofe", "'its' (posesivo) NO lleva apóstrofe. 'it's' con apóstrofe siempre significa 'it is'.", "The dog wagged its tail. (NO its')"]
+    ],
+    quiz: [
+      {prompt:"This is ___ book. (de mí)", options:["me","my","mine","I"], correct:"my"},
+      {prompt:"Is this pen ___? (de ti — respuesta corta)", options:["your","you","yours","you're"], correct:"yours"},
+      {prompt:"That is ___ car. (de él)", options:["he","his","him","he's"], correct:"his"},
+      {prompt:"___ dog is very friendly. (de ellos)", options:["Their","There","They're","Them"], correct:"Their"},
+      {prompt:"Sarah ___ bag is red.", options:["s","'s","s'","is"], correct:"'s"},
+      {prompt:"The teachers' ___ office is upstairs. (de los profesores, correcto ya con apóstrofe)", options:["teacher's","teachers'","teachers","teacher"], correct:"teachers'"}
+    ]
+  },
+  tobe: {
+    label: "Verbo To Be (am / is / are)",
+    intro: "El verbo más usado en inglés. Cambia según quién es el sujeto, y tiene forma afirmativa, negativa y de pregunta.",
+    practice: pairs([
+      ["I am a student.","Soy estudiante."],
+      ["She is happy.","Ella está feliz."],
+      ["They are my neighbors.","Ellos son mis vecinos."],
+      ["Are you ready?","¿Estás listo?"],
+      ["Yes, I am.","respuesta corta afirmativa"],
+      ["No, they aren't.","respuesta corta negativa"]
+    ]),
+    rows: [
+      ["I", "am", "I am a student. / I'm not tired. / Am I late?"],
+      ["You / We / They", "are", "You are kind. / They aren't home. / Are we ready?"],
+      ["He / She / It", "is", "She is happy. / It isn't cold. / Is he your friend?"],
+      ["Respuesta corta afirmativa", "Yes, + sujeto + am/is/are", "Yes, I am. / Yes, she is. / Yes, they are."],
+      ["Respuesta corta negativa", "No, + sujeto + am not/isn't/aren't", "No, I'm not. / No, he isn't. / No, we aren't."],
+      ["⚠ Excepción: nunca 'Yes, I'm.'", "En respuesta corta afirmativa NUNCA se contrae. Se dice 'Yes, I am.' completo.", "Yes, I am. (NO Yes, I'm.)"]
+    ],
+    quiz: [
+      {prompt:"I ___ from Colombia.", options:["am","is","are","be"], correct:"am"},
+      {prompt:"She ___ a doctor.", options:["am","is","are","be"], correct:"is"},
+      {prompt:"They ___ my neighbors.", options:["am","is","are","be"], correct:"are"},
+      {prompt:"___ you ready?", options:["Am","Is","Are","Be"], correct:"Are"},
+      {prompt:"Is he your brother? Yes, he ___.", options:["do","is","am","are"], correct:"is"},
+      {prompt:"Are they tired? No, they ___.", options:["isn't","aren't","am not","don't"], correct:"aren't"},
+      {prompt:"___ I late for class?", options:["Am","Is","Are","Do"], correct:"Am"}
+    ]
+  },
+  haveverb: {
+    label: "Have / Has / Have got",
+    intro: "'Have' significa tener. Cambia a 'has' con he/she/it. 'Have got' / 'has got' significa lo mismo (más común al hablar, sobre todo en inglés británico, pero se usa también en EEUU de forma casual).",
+    practice: pairs([
+      ["I have a car.","Tengo un carro."],
+      ["She has a dog.","Ella tiene un perro."],
+      ["I've got a car.","Tengo un carro. (forma hablada)"],
+      ["I don't have money.","No tengo dinero."],
+      ["She hasn't got time.","Ella no tiene tiempo."],
+      ["Do you have a pen?","¿Tienes un lapicero?"],
+      ["Has he got a car?","¿Tiene él un carro?"]
+    ]),
+    rows: [
+      ["I / you / we / they", "have", "I have a car. / They have two kids."],
+      ["he / she / it", "has", "She has a dog. / It has four legs."],
+      ["Forma 'have got' (más hablada)", "have got / has got — mismo significado que have/has", "I've got a car. / She's got a dog."],
+      ["Negativo con have", "don't/doesn't + have", "I don't have money. / She doesn't have time."],
+      ["Negativo con have got", "haven't/hasn't got", "I haven't got money. / She hasn't got time."],
+      ["Pregunta con have", "Do/Does + subject + have...?", "Do you have a pen? / Does he have a car?"],
+      ["Pregunta con have got", "Have/Has + subject + got...?", "Have you got a pen? / Has he got a car?"],
+      ["⚠ Excepción: 'have' también es verbo auxiliar", "En 'I have finished' (presente perfecto), have NO significa 'tener', es solo un auxiliar.", "I have finished my homework."]
+    ],
+    quiz: [
+      {prompt:"She ___ a new phone. (he/she/it)", options:["have","has","haves","having"], correct:"has"},
+      {prompt:"I ___ two brothers.", options:["has","have","haves","am"], correct:"have"},
+      {prompt:"___ you have a pen?", options:["Do","Does","Are","Is"], correct:"Do"},
+      {prompt:"He ___ have a car. (negativo)", options:["don't","doesn't","isn't","haven't"], correct:"doesn't"},
+      {prompt:"___ she got a sister? (forma con 'got')", options:["Do","Does","Has","Have"], correct:"Has"},
+      {prompt:"I ___ got any money. (negativo con got)", options:["don't","haven't","hasn't","doesn't"], correct:"haven't"}
+    ]
+  },
+  yesno: {
+    label: "Preguntas Yes / No",
+    intro: "Se responden con Yes o No. La estructura depende del verbo: se usa un auxiliar (do/does/did, am/is/are, have/has, can/will) al INICIO de la pregunta.",
+    practice: pairs([
+      ["Do you like coffee?","pregunta yes/no con verbo normal"],
+      ["Does she work on Saturdays?","pregunta yes/no (he/she/it)"],
+      ["Are you tired?","pregunta yes/no con to be"],
+      ["Can you swim?","pregunta yes/no con modal"],
+      ["Did you see him yesterday?","pregunta yes/no en pasado"]
+    ]),
+    rows: [
+      ["Con verbos normales (presente)", "Do/Does + sujeto + verbo base?", "Do you like pizza? / Does she work here?"],
+      ["Con verbos normales (pasado)", "Did + sujeto + verbo base?", "Did you see the movie?"],
+      ["Con to be", "Am/Is/Are + sujeto...?", "Are you tired?"],
+      ["Con have/has (posesión)", "Do/Does + sujeto + have...? o Have/Has + sujeto + got...?", "Do you have a car? / Have you got a car?"],
+      ["Con modales", "Can/Will/Should + sujeto + verbo base?", "Can you swim? / Will you come?"],
+      ["Respuesta corta", "Yes/No + sujeto + mismo auxiliar (sin contraer si es afirmativa)", "Yes, I do. / No, she doesn't. / Yes, I can. / No, I won't."]
+    ],
+    quiz: [
+      {prompt:"___ you like coffee?", options:["Do","Does","Are","Have"], correct:"Do"},
+      {prompt:"___ she work on Saturdays?", options:["Do","Does","Is","Has"], correct:"Does"},
+      {prompt:"___ you tired?", options:["Do","Does","Are","Have"], correct:"Are"},
+      {prompt:"Do you like tea? Yes, I ___.", options:["like","do","am","have"], correct:"do"},
+      {prompt:"Can she drive? No, she ___.", options:["doesn't","can't","isn't","don't"], correct:"can't"},
+      {prompt:"___ you see him yesterday?", options:["Do","Did","Does","Have"], correct:"Did"}
+    ]
+  }
+};
+
+/* ---------- STORAGE ---------- */
+function loadVocab(){
+  try {
+    const raw = localStorage.getItem("mi_vocab_en");
+    return raw ? JSON.parse(raw) : [];
+  } catch(e){ return []; }
+}
+function saveVocab(list){
+  try { localStorage.setItem("mi_vocab_en", JSON.stringify(list)); } catch(e){}
+}
+function loadBest(){
+  try { return parseInt(localStorage.getItem("mi_best_score") || "0", 10); } catch(e){ return 0; }
+}
+function saveBest(n){
+  try { localStorage.setItem("mi_best_score", String(n)); } catch(e){}
+}
+
+function loadRepaso(){
+  try {
+    const raw = localStorage.getItem("mi_repaso");
+    return raw ? JSON.parse(raw) : [];
+  } catch(e){ return []; }
+}
+function saveRepaso(list){
+  try { localStorage.setItem("mi_repaso", JSON.stringify(list)); } catch(e){}
+}
+let repaso = loadRepaso();
+
+function addToRepaso(item){
+  if (!item || !item.en) return;
+  const existing = repaso.find(r => r.en.toLowerCase() === item.en.toLowerCase());
+  if (existing) { existing.misses = (existing.misses||0) + 1; existing.hits = 0; }
+  else repaso.push({ en: item.en, es: item.es || "", misses: 1, hits: 0 });
+  saveRepaso(repaso);
+  refreshRepasoBadge();
+}
+function markRepasoProgress(en, correct){
+  const existing = repaso.find(r => r.en.toLowerCase() === en.toLowerCase());
+  if (!existing) return;
+  if (correct) {
+    existing.hits = (existing.hits||0) + 1;
+    if (existing.hits >= 3) {
+      repaso = repaso.filter(r => r !== existing); // dominada, sale del repaso
+    }
+  } else {
+    existing.hits = 0;
+    existing.misses = (existing.misses||0) + 1;
+  }
+  saveRepaso(repaso);
+  refreshRepasoBadge();
+}
+function refreshRepasoBadge(){
+  const el = document.getElementById("repasoCount");
+  if (el) el.textContent = repaso.length;
+}
+
+let vocab = loadVocab();
+document.getElementById("bestScore").textContent = loadBest();
+refreshRepasoBadge();
+
+/* ---------- SPEECH ---------- */
+// Voces conocidas de mejor calidad (redes neuronales), en orden de preferencia.
+const PREFERRED_VOICE_NAMES = [
+  "Google US English",
+  "Microsoft Aria Online (Natural) - English (United States)",
+  "Microsoft Ana Online (Natural) - English (United States)",
+  "Microsoft Guy Online (Natural) - English (United States)",
+  "Microsoft Jenny Online (Natural) - English (United States)",
+  "Samantha",
+  "Microsoft Zira - English (United States)",
+  "Microsoft David - English (United States)",
+  "Google UK English Female"
+];
+
+let englishVoice = null;
+let availableEnglishVoices = [];
+let speechRate = parseFloat(localStorage.getItem("mi_voice_rate") || "0.95") || 0.95;
+
+function scoreVoice(v){
+  const exactIdx = PREFERRED_VOICE_NAMES.indexOf(v.name);
+  if (exactIdx !== -1) return 1000 - exactIdx;
+  const n = v.name.toLowerCase();
+  let score = 0;
+  if (n.includes("natural") || n.includes("neural") || n.includes("online")) score += 50;
+  if (n.includes("google")) score += 30;
+  if (v.lang === "en-US") score += 20;
+  else if (v.lang && v.lang.startsWith("en")) score += 10;
+  if (v.localService === false) score += 5; // remote voices are often higher quality
+  return score;
+}
+
+function pickVoice(){
+  const voices = window.speechSynthesis ? speechSynthesis.getVoices() : [];
+  availableEnglishVoices = voices.filter(v => v.lang && v.lang.startsWith("en"));
+  if (availableEnglishVoices.length === 0) return;
+
+  const savedName = localStorage.getItem("mi_voice_name");
+  let chosen = savedName ? availableEnglishVoices.find(v => v.name === savedName) : null;
+  if (!chosen) {
+    chosen = availableEnglishVoices.slice().sort((a,b) => scoreVoice(b) - scoreVoice(a))[0];
+  }
+  englishVoice = chosen || null;
+  populateVoiceSelect();
+}
+
+function populateVoiceSelect(){
+  const sel = document.getElementById("voiceSelect");
+  if (!sel || availableEnglishVoices.length === 0) return;
+  sel.innerHTML = "";
+  availableEnglishVoices
+    .slice()
+    .sort((a,b) => scoreVoice(b) - scoreVoice(a))
+    .forEach(v => {
+      const opt = document.createElement("option");
+      opt.value = v.name;
+      opt.textContent = v.name + (v.lang ? " (" + v.lang + ")" : "");
+      if (englishVoice && v.name === englishVoice.name) opt.selected = true;
+      sel.appendChild(opt);
+    });
+}
+
+if (window.speechSynthesis) {
+  pickVoice();
+  speechSynthesis.onvoiceschanged = pickVoice;
+  // Algunos navegadores tardan en poblar la lista; reintenta una vez más.
+  setTimeout(pickVoice, 400);
+}
+
+function speak(text, opts){
+  try {
+    if (!window.speechSynthesis) return;
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = "en-US";
+    u.rate = (opts && opts.rate) || speechRate;
+    u.pitch = 1;
+    u.volume = 1;
+    if (englishVoice) u.voice = englishVoice;
+    speechSynthesis.speak(u);
+  } catch(e){}
+}
+function shuffle(arr){
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i+1));
+    [a[i],a[j]] = [a[j],a[i]];
+  }
+  return a;
+}
+
+/* ---------- TABS ---------- */
+const TABS = [
+  {id:"abc", label:"Sonidos ABC"},
+  {id:"cvc", label:"Palabras CVC"},
+  {id:"patterns", label:"Patrones"},
+  {id:"sight", label:"Sight Words"},
+  {id:"grammar", label:"Gramática"},
+  {id:"vocab", label:"Mi Vocabulario"},
+  {id:"repaso", label:"📌 Repaso"},
+  {id:"dictado", label:"Dictado General"}
+];
+let currentTab = "abc";
+const tabNav = document.getElementById("tabNav");
+TABS.forEach(t => {
+  const b = document.createElement("button");
+  b.textContent = t.label;
+  b.dataset.id = t.id;
+  b.onclick = () => { currentTab = t.id; render(); };
+  tabNav.appendChild(b);
+});
+
+function updateTabNav(){
+  [...tabNav.children].forEach(b => b.classList.toggle("active", b.dataset.id === currentTab));
+}
+
+const root = document.getElementById("panelRoot");
+
+function render(){
+  updateTabNav();
+  root.innerHTML = "";
+  if (currentTab === "abc") renderAbc();
+  else if (currentTab === "cvc") renderWordTab(CVC, "Palabras CVC", "Se leen tal cual, sonido por sonido. Buen punto de partida.");
+  else if (currentTab === "patterns") renderPatterns();
+  else if (currentTab === "sight") renderWordTab(SIGHT, "Sight Words", "Palabras irregulares de alta frecuencia: se memorizan como imagen completa.");
+  else if (currentTab === "grammar") renderGrammar();
+  else if (currentTab === "vocab") renderVocab();
+  else if (currentTab === "repaso") renderRepaso();
+  else if (currentTab === "dictado") renderDictadoGeneral();
+}
+
+/* ---------- ABC TAB ---------- */
+let abcSelected = null;
+let abcMode = "explorar";
+
+function renderAbc(){
+  const h = document.createElement("div");
+  h.innerHTML = `<h2>Sonidos ABC</h2><p class="lead">Nombre de la letra vs. sonido dentro de una palabra. Toca una letra para explorarla, o juega a adivinar.</p>`;
+  root.appendChild(h);
+
+  const toggle = document.createElement("div");
+  toggle.className = "mode-toggle";
+  toggle.innerHTML = `
+    <button data-m="explorar" class="${abcMode==='explorar'?'active':''}">Explorar letras</button>
+    <button data-m="quiz" class="${abcMode==='quiz'?'active':''}">🎮 Adivina la letra</button>
+    <button data-m="practica" class="${abcMode==='practica'?'active':''}">🃏 Tarjetas y Dictado</button>
+  `;
+  toggle.querySelectorAll("button").forEach(b => b.onclick = () => { abcMode = b.dataset.m; render(); });
+  root.appendChild(toggle);
+
+  if (abcMode === "explorar") {
+    const grid = document.createElement("div");
+    grid.className = "letter-grid";
+    ALPHABET.forEach(item => {
+      const b = document.createElement("button");
+      b.textContent = item.l;
+      if (abcSelected === item.l) b.classList.add("active");
+      b.onclick = () => { abcSelected = item.l; render(); };
+      grid.appendChild(b);
+    });
+    root.appendChild(grid);
+
+    const sel = ALPHABET.find(a => a.l === abcSelected) || ALPHABET[0];
+    const detail = document.createElement("div");
+    detail.className = "letter-detail";
+    detail.innerHTML = `
+      <div class="big-letter">${sel.l}</div>
+      <div class="row-line"><span class="label">Nombre:</span> "${sel.name}" <button class="speak-btn" data-say="${sel.l}">🔊 nombre</button></div>
+      <div class="row-line"><span class="label">Sonido:</span> "${sel.sound}"</div>
+      <div class="example-list"></div>
+    `;
+    root.appendChild(detail);
+    detail.querySelector('[data-say]').onclick = () => speak(sel.l);
+    const list = detail.querySelector(".example-list");
+    sel.examples.forEach(([en,es]) => {
+      const row = document.createElement("div");
+      row.className = "example-item";
+      row.innerHTML = `<span class="word">${en}</span><span class="es">${es}</span><button class="speak-btn">🔊</button>`;
+      row.querySelector("button").onclick = () => speak(en);
+      list.appendChild(row);
+    });
+
+    const allHeader = document.createElement("h2");
+    allHeader.style.marginTop = "26px";
+    allHeader.textContent = "🔊 Todas las palabras del abecedario";
+    root.appendChild(allHeader);
+    const allNote = document.createElement("p");
+    allNote.className = "lead";
+    allNote.textContent = "Las 78 palabras de ejemplo, todas juntas, para escuchar cualquiera sin tener que entrar letra por letra.";
+    root.appendChild(allNote);
+    const allList = document.createElement("div");
+    allList.className = "example-list";
+    ALPHABET.forEach(a => {
+      a.examples.forEach(([en,es]) => {
+        const row = document.createElement("div");
+        row.className = "example-item";
+        row.innerHTML = `<span class="word">${a.l} — ${en}</span><span class="es">${es}</span><button class="speak-btn">🔊</button>`;
+        row.querySelector("button").onclick = () => speak(en);
+        allList.appendChild(row);
+      });
+    });
+    root.appendChild(allList);
+  } else if (abcMode === "quiz") {
+    renderAbcQuiz();
+  } else {
+    const items = ALPHABET.flatMap(a => a.examples.map(([en,es]) => ({en, es})));
+    renderWordTab(items, "Palabras del abecedario", "Tarjetas y dictado con los ejemplos de cada letra.", "abc-practica");
+  }
+}
+
+let abcQuizState = null;
+function newAbcQuestion(){
+  const pool = ALPHABET.flatMap(a => a.examples.map(e => ({en:e[0], letter:a.l})));
+  const q = pool[Math.floor(Math.random()*pool.length)];
+  const wrongLetters = shuffle(ALPHABET.map(a=>a.l).filter(l => l !== q.letter)).slice(0,3);
+  const options = shuffle([q.letter, ...wrongLetters]);
+  abcQuizState = { word: q.en, correct: q.letter, options, answered: false, score: abcQuizState ? abcQuizState.score : 0, total: abcQuizState ? abcQuizState.total : 0 };
+}
+function renderAbcQuiz(){
+  if (!abcQuizState) newAbcQuestion();
+  const s = abcQuizState;
+  const box = document.createElement("div");
+  box.innerHTML = `<div class="progress-line">Puntaje: ${s.score} / ${s.total}</div>`;
+  const dic = document.createElement("div");
+  dic.className = "dictation-box";
+  dic.innerHTML = `<p>Escucha la palabra: ¿con qué letra empieza?</p><button class="big-speak">🔊</button>`;
+  dic.querySelector("button").onclick = () => speak(s.word);
+  box.appendChild(dic);
+
+  const opts = document.createElement("div");
+  opts.className = "quiz-options";
+  s.options.forEach(letter => {
+    const b = document.createElement("button");
+    b.textContent = letter;
+    b.disabled = s.answered;
+    if (s.answered && letter === s.correct) b.classList.add("correct");
+    if (s.answered && letter !== s.correct) { /* leave neutral */ }
+    b.onclick = () => {
+      if (s.answered) return;
+      s.answered = true;
+      s.total++;
+      if (letter === s.correct) { s.score++; b.classList.add("correct"); }
+      else { b.classList.add("wrong"); }
+      renderAbcQuiz();
+    };
+    opts.appendChild(b);
+  });
+  box.appendChild(opts);
+
+  if (s.answered) {
+    const info = document.createElement("p");
+    info.style.marginTop = "12px";
+    info.innerHTML = `La palabra era <strong>${s.word}</strong> (empieza con "${s.correct}").`;
+    box.appendChild(info);
+    const btn = document.createElement("button");
+    btn.className = "btn";
+    btn.textContent = "Siguiente palabra →";
+    btn.style.marginTop = "10px";
+    btn.onclick = () => { newAbcQuestion(); render(); };
+    box.appendChild(btn);
+  }
+  root.appendChild(box);
+  speak(s.word);
+}
+
+/* ---------- REPASO TAB (refuerzo constante) ---------- */
+function renderRepaso(){
+  const h = document.createElement("div");
+  h.innerHTML = `<h2>📌 Repaso</h2><p class="lead">Aquí caen automáticamente las palabras que fallaste en cualquier ejercicio de dictado (CVC, patrones, sight words, vocabulario). Practícalas hasta acertar 3 veces seguidas y salen de la lista — así refuerzas justo lo que más se te dificulta, con el tiempo.</p>`;
+  root.appendChild(h);
+
+  if (repaso.length === 0) {
+    const note = document.createElement("p");
+    note.className = "empty-note";
+    note.textContent = "Todavía no tienes palabras en repaso. Cuando falles una palabra en cualquier dictado, va a aparecer aquí automáticamente.";
+    root.appendChild(note);
+    return;
+  }
+
+  const listWrap = document.createElement("div");
+  listWrap.className = "vocab-list";
+  listWrap.style.marginBottom = "20px";
+  repaso.slice().sort((a,b) => b.misses - a.misses).forEach(r => {
+    const row = document.createElement("div");
+    row.className = "vocab-item";
+    row.innerHTML = `<div class="words"><span class="en">${r.en}</span><span class="es">${r.es}</span></div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span style="font-size:0.78rem;color:var(--ink-soft);">fallas: ${r.misses} · aciertos seguidos: ${r.hits}/3</span>
+        <button class="speak-btn" data-say>🔊</button>
+      </div>`;
+    row.querySelector('[data-say]').onclick = () => speak(r.en);
+    listWrap.appendChild(row);
+  });
+  root.appendChild(listWrap);
+
+  const clearBtn = document.createElement("button");
+  clearBtn.className = "btn secondary";
+  clearBtn.style.marginBottom = "20px";
+  clearBtn.textContent = "Vaciar lista de repaso";
+  clearBtn.onclick = () => {
+    if (confirm("¿Seguro que quieres vaciar tu lista de repaso?")) {
+      repaso = []; saveRepaso(repaso); refreshRepasoBadge(); delete wordTabState["📌 Repaso"]; render();
+    }
+  };
+  root.appendChild(clearBtn);
+
+  const items = repaso.map(r => ({en:r.en, es:r.es}));
+  renderWordTab(items, "Practicar mi repaso", "Tarjetas y dictado con tus palabras pendientes.", "📌 Repaso");
+}
+
+/* ---------- GRAMMAR TAB ---------- */
+let currentGrammarTopic = "demonstratives";
+let grammarViewMode = "learn";
+const grammarQuizState = {};
+
+function renderGrammar(){
+  const h = document.createElement("div");
+  h.innerHTML = `<h2>Gramática</h2><p class="lead">Reglas clave para hablar y escribir mejor. Lee la explicación, practica con el quiz, o pásate a tarjetas y dictado.</p>`;
+  root.appendChild(h);
+
+  const sub = document.createElement("div");
+  sub.className = "subnav";
+  Object.keys(GRAMMAR).forEach(key => {
+    const b = document.createElement("button");
+    b.textContent = GRAMMAR[key].label;
+    if (key === currentGrammarTopic) b.classList.add("active");
+    b.onclick = () => { currentGrammarTopic = key; render(); };
+    sub.appendChild(b);
+  });
+  root.appendChild(sub);
+
+  const topic = GRAMMAR[currentGrammarTopic];
+
+  const modeToggle = document.createElement("div");
+  modeToggle.className = "mode-toggle";
+  modeToggle.innerHTML = `
+    <button data-m="learn" class="${grammarViewMode==='learn'?'active':''}">📖 Explicación y Quiz</button>
+    <button data-m="practice" class="${grammarViewMode==='practice'?'active':''}">🃏 Tarjetas y Dictado</button>
+  `;
+  modeToggle.querySelectorAll("button").forEach(b => b.onclick = () => { grammarViewMode = b.dataset.m; render(); });
+  root.appendChild(modeToggle);
+
+  if (grammarViewMode === "practice") {
+    renderWordTab(topic.practice, topic.label, "Practica frases y palabras clave de este tema con tarjetas o dictado.", "grammar-"+currentGrammarTopic);
+    return;
+  }
+
+  const box = document.createElement("div");
+  box.className = "letter-detail";
+  box.innerHTML = `<p style="margin-top:0;">${topic.intro}</p>`;
+  const table = document.createElement("div");
+  table.className = "example-list";
+  topic.rows.forEach(r => {
+    const row = document.createElement("div");
+    row.className = "example-item";
+    row.style.flexDirection = "column";
+    row.style.alignItems = "flex-start";
+    row.style.gap = "3px";
+    row.innerHTML = `<span class="word">${r[0]}</span><span class="es">${r[1]}</span>${r[2] ? `<span style="font-size:0.85rem;color:var(--ink-soft);">${r[2]}</span>` : ""}`;
+    table.appendChild(row);
+  });
+  box.appendChild(table);
+  root.appendChild(box);
+
+  const quizHeader = document.createElement("h2");
+  quizHeader.style.marginTop = "24px";
+  quizHeader.textContent = "🎮 Practica";
+  root.appendChild(quizHeader);
+
+  renderGrammarQuiz(currentGrammarTopic, topic.quiz);
+}
+
+function renderGrammarQuiz(key, questions){
+  if (!grammarQuizState[key]) grammarQuizState[key] = { order: shuffle(questions.map((_,i)=>i)), idx:0, score:0, answered:false };
+  const st = grammarQuizState[key];
+
+  if (st.idx >= st.order.length) {
+    const end = document.createElement("div");
+    end.innerHTML = `<div class="end-score">${st.score} / ${st.order.length} 🎉</div>`;
+    const btn = document.createElement("button");
+    btn.className = "btn";
+    btn.textContent = "Repetir";
+    btn.onclick = () => { grammarQuizState[key] = null; render(); };
+    end.appendChild(btn);
+    root.appendChild(end);
+    return;
+  }
+
+  const q = questions[st.order[st.idx]];
+  const p = document.createElement("div");
+  p.className = "progress-line";
+  p.textContent = `Pregunta ${st.idx+1} de ${st.order.length} — aciertos: ${st.score}`;
+  root.appendChild(p);
+
+  const qBox = document.createElement("div");
+  qBox.className = "letter-detail";
+  qBox.innerHTML = `<p style="margin:0 0 6px;font-size:1.05rem;">${q.prompt}</p>`;
+  root.appendChild(qBox);
+
+  const opts = document.createElement("div");
+  opts.className = "quiz-options";
+  opts.style.gridTemplateColumns = "repeat(2, 1fr)";
+  shuffle(q.options).forEach(opt => {
+    const b = document.createElement("button");
+    b.textContent = opt;
+    b.style.fontFamily = "'Work Sans', sans-serif";
+    b.style.fontSize = "0.95rem";
+    b.disabled = st.answered;
+    if (st.answered && opt === q.correct) b.classList.add("correct");
+    b.onclick = () => {
+      if (st.answered) return;
+      st.answered = true;
+      if (opt === q.correct) { st.score++; b.classList.add("correct"); }
+      else b.classList.add("wrong");
+      render();
+    };
+    opts.appendChild(b);
+  });
+  root.appendChild(opts);
+
+  if (st.answered) {
+    const info = document.createElement("p");
+    info.style.marginTop = "12px";
+    info.innerHTML = `Respuesta correcta: <strong>${q.correct}</strong>`;
+    root.appendChild(info);
+    const btn = document.createElement("button");
+    btn.className = "btn";
+    btn.style.marginTop = "8px";
+    btn.textContent = "Siguiente →";
+    btn.onclick = () => { st.idx++; st.answered = false; render(); };
+    root.appendChild(btn);
+  }
+}
+
+/* ---------- GENERIC WORD TAB (flashcards + dictation) ---------- */
+const wordTabState = {}; // keyed by title, {mode, deck, idx, flipped, score, total, ...}
+
+function getState(key, items){
+  if (!wordTabState[key]) {
+    wordTabState[key] = { mode:"flash", deck: shuffle(items), idx:0, flipped:false, score:0, total:0, dictScore:0, dictTotal:0, feedback:null };
+  }
+  return wordTabState[key];
+}
+
+function renderWordTab(items, title, lead, key){
+  key = key || title;
+  const st = getState(key, items);
+  const wrap = document.createElement("div");
+  wrap.innerHTML = `<h2>${title}</h2><p class="lead">${lead}</p>`;
+  root.appendChild(wrap);
+
+  const toggle = document.createElement("div");
+  toggle.className = "mode-toggle";
+  toggle.innerHTML = `
+    <button data-m="flash" class="${st.mode==='flash'?'active':''}">🃏 Tarjetas</button>
+    <button data-m="dict" class="${st.mode==='dict'?'active':''}">✏️ Escuchar y escribir</button>
+  `;
+  toggle.querySelectorAll("button").forEach(b => b.onclick = () => { st.mode = b.dataset.m; render(); });
+  root.appendChild(toggle);
+
+  if (st.mode === "flash") renderFlashcards(st, items);
+  else renderDictation(st, items);
+}
+
+function renderFlashcards(st, items){
+  if (st.idx >= st.deck.length) {
+    const end = document.createElement("div");
+    end.innerHTML = `<div class="end-score">${st.score} / ${st.deck.length} 🎉</div>`;
+    const btn = document.createElement("button");
+    btn.className = "btn";
+    btn.textContent = "Repetir con orden nuevo";
+    btn.onclick = () => { st.deck = shuffle(items); st.idx = 0; st.score = 0; st.flipped = false; render(); };
+    end.appendChild(btn);
+    root.appendChild(end);
+    return;
+  }
+  const item = st.deck[st.idx];
+  const p = document.createElement("div");
+  p.className = "progress-line";
+  p.textContent = `Tarjeta ${st.idx+1} de ${st.deck.length} — aciertos: ${st.score}`;
+  root.appendChild(p);
+
+  const card = document.createElement("div");
+  card.className = "flashcard";
+  card.innerHTML = st.flipped
+    ? `<div class="back">${item.es}</div><div class="hint">toca para ver la palabra en inglés</div>`
+    : `<div class="front">${item.en}</div><div class="hint">toca para ver el significado</div>`;
+  card.onclick = () => { st.flipped = !st.flipped; render(); };
+  root.appendChild(card);
+
+  const speakBtn = document.createElement("button");
+  speakBtn.className = "speak-btn";
+  speakBtn.style.marginTop = "10px";
+  speakBtn.textContent = "🔊 Escuchar";
+  speakBtn.onclick = (e) => { e.stopPropagation(); speak(item.en); };
+  root.appendChild(speakBtn);
+
+  const row = document.createElement("div");
+  row.className = "btn-row";
+  const bNo = document.createElement("button");
+  bNo.className = "btn secondary";
+  bNo.textContent = "Todavía no la sé";
+  bNo.onclick = () => { st.idx++; st.flipped = false; render(); };
+  const bYes = document.createElement("button");
+  bYes.className = "btn";
+  bYes.textContent = "Ya la sé ✓";
+  bYes.onclick = () => { st.score++; st.idx++; st.flipped = false; render(); };
+  row.appendChild(bNo); row.appendChild(bYes);
+  root.appendChild(row);
+}
+
+function renderDictation(st, items){
+  if (!st.dictWord || st.dictDone) {
+    st.dictWord = items[Math.floor(Math.random()*items.length)];
+    st.dictDone = false;
+    st.feedback = null;
+  }
+  const p = document.createElement("div");
+  p.className = "progress-line";
+  p.textContent = `Puntaje: ${st.dictScore} / ${st.dictTotal}`;
+  root.appendChild(p);
+
+  const box = document.createElement("div");
+  box.className = "dictation-box";
+  box.innerHTML = `<p>Escucha la palabra y escríbela como se escribe en inglés:</p>
+    <button class="big-speak">🔊</button><br>
+    <input type="text" placeholder="escribe aquí..." autocomplete="off" spellcheck="false">
+    <div class="btn-row" style="justify-content:center;">
+      <button class="btn" id="checkBtn">Comprobar</button>
+      <button class="btn secondary" id="skipBtn">Siguiente →</button>
+    </div>
+    <div class="feedback" id="fb"></div>
+  `;
+  root.appendChild(box);
+
+  const input = box.querySelector("input");
+  box.querySelector(".big-speak").onclick = () => speak(st.dictWord.en);
+  const fb = box.querySelector("#fb");
+
+  function check(){
+    const val = input.value.trim().toLowerCase();
+    if (!val) return;
+    st.dictTotal++;
+    const correct = val === st.dictWord.en.toLowerCase();
+    if (correct) {
+      st.dictScore++;
+      fb.className = "feedback correct";
+      fb.innerHTML = `¡Correcto! <strong>${st.dictWord.en}</strong> — ${st.dictWord.es}`;
+      markRepasoProgress(st.dictWord.en, true);
+    } else {
+      fb.className = "feedback wrong";
+      fb.innerHTML = `Casi. Se escribe: <strong>${st.dictWord.en}</strong> (${st.dictWord.es})`;
+      addToRepaso(st.dictWord);
+    }
+    st.dictDone = true;
+    input.disabled = true;
+    updateBestIfNeeded(st.dictScore);
+  }
+  box.querySelector("#checkBtn").onclick = check;
+  input.addEventListener("keydown", e => { if (e.key === "Enter") check(); });
+  box.querySelector("#skipBtn").onclick = () => { st.dictDone = true; st.dictWord = null; render(); };
+
+  if (st.dictDone) {
+    fb.className = st.feedbackClass || fb.className;
+  }
+  setTimeout(() => speak(st.dictWord.en), 300);
+  input.focus();
+
+  if (st.dictDone) {
+    const nextBtn = document.createElement("button");
+    nextBtn.className = "btn";
+    nextBtn.style.marginTop = "10px";
+    nextBtn.textContent = "Siguiente palabra →";
+    nextBtn.onclick = () => { st.dictWord = null; st.dictDone = false; render(); };
+    box.appendChild(nextBtn);
+  }
+}
+
+function updateBestIfNeeded(score){
+  const best = loadBest();
+  if (score > best) { saveBest(score); document.getElementById("bestScore").textContent = score; }
+}
+
+/* ---------- PATTERNS TAB ---------- */
+let currentPattern = "th";
+function renderPatterns(){
+  const h = document.createElement("div");
+  h.innerHTML = `<h2>Patrones de letras</h2><p class="lead">Grupos de letras que juntas hacen un sonido distinto. Elige un patrón para practicarlo.</p>`;
+  root.appendChild(h);
+
+  const sub = document.createElement("div");
+  sub.className = "subnav";
+  Object.keys(PATTERNS).forEach(key => {
+    const b = document.createElement("button");
+    b.textContent = PATTERNS[key].label;
+    if (key === currentPattern) b.classList.add("active");
+    b.onclick = () => { currentPattern = key; render(); };
+    sub.appendChild(b);
+  });
+  root.appendChild(sub);
+
+  const patternData = PATTERNS[currentPattern];
+  const soundBox = document.createElement("div");
+  soundBox.className = "letter-detail";
+  soundBox.style.marginBottom = "16px";
+  if (patternData.soundHint) {
+    soundBox.innerHTML = `<p style="margin:0 0 8px;">Escucha solo el sonido del patrón "<strong>${patternData.label}</strong>" (aproximado, sin el resto de la palabra):</p>`;
+    const btn = document.createElement("button");
+    btn.className = "btn";
+    btn.textContent = "🔊 Solo el patrón";
+    btn.onclick = () => speak(patternData.soundHint, {rate: 0.6});
+    soundBox.appendChild(btn);
+    const note = document.createElement("p");
+    note.style.cssText = "font-size:0.8rem;color:var(--ink-soft);margin:8px 0 0;";
+    note.textContent = "Nota: es una aproximación de la voz del navegador, no un sonido aislado perfecto. Combínalo con tu clase o app para afinar el oído.";
+    soundBox.appendChild(note);
+  } else if (patternData.comparePairs) {
+    soundBox.innerHTML = `<p style="margin:0 0 10px;">Compara pares de palabras para notar cómo la "e" muda cambia el sonido de la vocal:</p>`;
+    const list = document.createElement("div");
+    list.className = "example-list";
+    patternData.comparePairs.forEach(([a,b]) => {
+      const row = document.createElement("div");
+      row.className = "example-item";
+      row.innerHTML = `<span class="word">${a}</span><span style="color:var(--ink-soft);">vs</span><span class="word">${b}</span><button class="speak-btn">🔊 ambas</button>`;
+      row.querySelector("button").onclick = () => { speak(a); setTimeout(() => speak(b), 900); };
+      list.appendChild(row);
+    });
+    soundBox.appendChild(list);
+  } else {
+    soundBox.innerHTML = `<p style="margin:0;">Este grupo son excepciones: cada palabra suena distinto, no hay un sonido único de patrón. Practícalas una por una con las tarjetas de abajo.</p>`;
+  }
+  root.appendChild(soundBox);
+
+  renderWordTab(patternData.items, patternData.label, "Practica este patrón con tarjetas o dictado.", "pattern-"+currentPattern);
+}
+
+/* ---------- VOCAB TAB ---------- */
+function renderVocab(){
+  const h = document.createElement("div");
+  h.innerHTML = `<h2>Mi Vocabulario</h2><p class="lead">Agrega tus propias palabras nuevas (de tu clase o tu app) y practícalas aquí. Se guardan en este navegador.</p>`;
+  root.appendChild(h);
+
+  const form = document.createElement("div");
+  form.className = "vocab-form";
+  form.innerHTML = `
+    <input type="text" id="enInput" placeholder="palabra en inglés">
+    <input type="text" id="esInput" placeholder="significado en español">
+    <button class="btn" id="addBtn">Agregar</button>
+  `;
+  root.appendChild(form);
+  form.querySelector("#addBtn").onclick = () => {
+    const en = form.querySelector("#enInput").value.trim();
+    const es = form.querySelector("#esInput").value.trim();
+    if (!en || !es) return;
+    vocab.push({en, es});
+    saveVocab(vocab);
+    delete wordTabState["Mi Vocabulario"];
+    render();
+  };
+
+  if (vocab.length === 0) {
+    const note = document.createElement("p");
+    note.className = "empty-note";
+    note.textContent = "Todavía no has agregado palabras. Escribe una arriba para empezar tu lista.";
+    root.appendChild(note);
+    return;
+  }
+
+  const listWrap = document.createElement("div");
+  listWrap.className = "vocab-list";
+  listWrap.style.marginBottom = "22px";
+  vocab.forEach((v, i) => {
+    const row = document.createElement("div");
+    row.className = "vocab-item";
+    row.innerHTML = `<div class="words"><span class="en">${v.en}</span><span class="es">${v.es}</span></div>
+      <div>
+        <button class="speak-btn" data-say>🔊</button>
+        <button class="del-btn" title="eliminar">✕</button>
+      </div>`;
+    row.querySelector('[data-say]').onclick = () => speak(v.en);
+    row.querySelector(".del-btn").onclick = () => {
+      vocab.splice(i,1); saveVocab(vocab); delete wordTabState["Mi Vocabulario"]; render();
+    };
+    listWrap.appendChild(row);
+  });
+  root.appendChild(listWrap);
+
+  renderWordTab(vocab, "Practicar mi vocabulario", "Tarjetas y dictado con tus propias palabras.", "Mi Vocabulario");
+}
+
+/* ---------- DICTADO GENERAL ---------- */
+let dgState = null;
+function allPatternItems(){
+  return Object.values(PATTERNS).flatMap(p => p.items);
+}
+function renderDictadoGeneral(){
+  const h = document.createElement("div");
+  h.innerHTML = `<h2>Dictado General</h2><p class="lead">Elige qué quieres practicar, escucha cada palabra y escríbela. Al final ves tu puntaje y tus errores.</p>`;
+  root.appendChild(h);
+
+  if (!dgState || dgState.finished === undefined) {
+    // setup screen
+    const sources = document.createElement("div");
+    sources.className = "source-grid";
+    const opts = [
+      {id:"cvc", label:"Palabras CVC", items: CVC},
+      {id:"patterns", label:"Patrones", items: allPatternItems()},
+      {id:"sight", label:"Sight Words", items: SIGHT},
+      {id:"vocab", label:"Mi Vocabulario ("+vocab.length+")", items: vocab}
+    ];
+    if (!renderDictadoGeneral.selected) renderDictadoGeneral.selected = {cvc:true, patterns:true, sight:true, vocab: vocab.length>0};
+    opts.forEach(o => {
+      const label = document.createElement("label");
+      const checked = renderDictadoGeneral.selected[o.id] ? "checked" : "";
+      label.innerHTML = `<input type="checkbox" data-id="${o.id}" ${checked} ${o.items.length===0?'disabled':''}> ${o.label}`;
+      label.querySelector("input").onchange = (e) => { renderDictadoGeneral.selected[o.id] = e.target.checked; };
+      sources.appendChild(label);
+    });
+    root.appendChild(sources);
+
+    const numSel = document.createElement("div");
+    numSel.className = "num-select";
+    numSel.innerHTML = `<label>Número de palabras:</label>
+      <select id="numQ"><option value="5">5</option><option value="10" selected>10</option><option value="15">15</option><option value="20">20</option></select>`;
+    root.appendChild(numSel);
+
+    const startBtn = document.createElement("button");
+    startBtn.className = "btn";
+    startBtn.textContent = "Empezar dictado ▶";
+    startBtn.onclick = () => {
+      const opts2 = [
+        {id:"cvc", items: CVC}, {id:"patterns", items: allPatternItems()},
+        {id:"sight", items: SIGHT}, {id:"vocab", items: vocab}
+      ];
+      let pool = [];
+      opts2.forEach(o => { if (renderDictadoGeneral.selected[o.id]) pool = pool.concat(o.items); });
+      if (pool.length === 0) { alert("Selecciona al menos una fuente de palabras."); return; }
+      const n = parseInt(numSel.querySelector("select").value, 10);
+      const deck = shuffle(pool).slice(0, Math.min(n, pool.length));
+      dgState = { deck, idx:0, score:0, results:[], finished:false, done:false };
+      render();
+    };
+    root.appendChild(startBtn);
+    return;
+  }
+
+  if (dgState.finished) {
+    const end = document.createElement("div");
+    end.innerHTML = `<div class="end-score">${dgState.score} / ${dgState.deck.length}</div>`;
+    updateBestIfNeeded(dgState.score);
+    const list = document.createElement("div");
+    list.className = "summary-list";
+    dgState.results.forEach(r => {
+      const row = document.createElement("div");
+      row.className = "summary-item " + (r.ok ? "ok" : "bad");
+      row.innerHTML = `<span>${r.en} (${r.es})</span><span>${r.ok ? "✓" : "tú: " + (r.given || "—")}</span>`;
+      list.appendChild(row);
+    });
+    end.appendChild(list);
+    const again = document.createElement("button");
+    again.className = "btn";
+    again.style.marginTop = "16px";
+    again.textContent = "Nuevo dictado";
+    again.onclick = () => { dgState = null; render(); };
+    end.appendChild(again);
+    root.appendChild(end);
+    return;
+  }
+
+  const item = dgState.deck[dgState.idx];
+  const p = document.createElement("div");
+  p.className = "progress-line";
+  p.textContent = `Palabra ${dgState.idx+1} de ${dgState.deck.length} — aciertos: ${dgState.score}`;
+  root.appendChild(p);
+
+  const box = document.createElement("div");
+  box.className = "dictation-box";
+  box.innerHTML = `<button class="big-speak">🔊</button><br>
+    <input type="text" placeholder="escribe aquí..." autocomplete="off" spellcheck="false">
+    <div class="btn-row" style="justify-content:center;">
+      <button class="btn" id="checkBtn">Comprobar</button>
+    </div>
+    <div class="feedback" id="fb"></div>`;
+  root.appendChild(box);
+  const input = box.querySelector("input");
+  box.querySelector(".big-speak").onclick = () => speak(item.en);
+  const fb = box.querySelector("#fb");
+
+  function submit(){
+    if (dgState.done) return;
+    const val = input.value.trim();
+    const ok = val.toLowerCase() === item.en.toLowerCase();
+    if (ok) { dgState.score++; markRepasoProgress(item.en, true); }
+    else addToRepaso(item);
+    dgState.results.push({en:item.en, es:item.es, ok, given: val});
+    fb.className = "feedback " + (ok ? "correct" : "wrong");
+    fb.innerHTML = ok ? `¡Correcto!` : `Se escribe: <strong>${item.en}</strong>`;
+    dgState.done = true;
+    input.disabled = true;
+    const nextBtn = document.createElement("button");
+    nextBtn.className = "btn";
+    nextBtn.style.marginTop = "10px";
+    nextBtn.textContent = dgState.idx+1 < dgState.deck.length ? "Siguiente →" : "Ver resultado final";
+    nextBtn.onclick = () => {
+      dgState.idx++;
+      dgState.done = false;
+      if (dgState.idx >= dgState.deck.length) dgState.finished = true;
+      render();
+    };
+    box.appendChild(nextBtn);
+  }
+  box.querySelector("#checkBtn").onclick = submit;
+  input.addEventListener("keydown", e => { if (e.key === "Enter") submit(); });
+  setTimeout(() => speak(item.en), 300);
+  input.focus();
+}
+
+/* ---------- VOICE CONTROLS UI ---------- */
+document.getElementById("voiceSelect").addEventListener("change", (e) => {
+  const chosen = availableEnglishVoices.find(v => v.name === e.target.value);
+  if (chosen) {
+    englishVoice = chosen;
+    try { localStorage.setItem("mi_voice_name", chosen.name); } catch(err){}
+    speak("This is how I sound now.");
+  }
+});
+document.getElementById("testVoiceBtn").addEventListener("click", () => {
+  speak("Hello! This is a test. The quick brown fox.");
+});
+document.getElementById("speedToggle").querySelectorAll("button").forEach(b => {
+  b.addEventListener("click", () => {
+    document.getElementById("speedToggle").querySelectorAll("button").forEach(x => x.classList.remove("active"));
+    b.classList.add("active");
+    speechRate = parseFloat(b.dataset.rate);
+    try { localStorage.setItem("mi_voice_rate", String(speechRate)); } catch(err){}
+    speak("Testing the new speed.");
+  });
+});
+// Marcar el botón de velocidad correcto según lo guardado
+(function initSpeedButton(){
+  const buttons = document.getElementById("speedToggle").querySelectorAll("button");
+  buttons.forEach(b => {
+    b.classList.toggle("active", parseFloat(b.dataset.rate) === speechRate);
+  });
+})();
+
+render();
+</script>
+</body>
+</html>
