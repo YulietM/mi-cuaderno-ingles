@@ -489,7 +489,7 @@
     <div class="score-badge">Mejor puntaje dictado: <strong id="bestScore">0</strong></div>
     <div class="score-badge">📌 Para repasar: <strong id="repasoCount">0</strong></div>
     <div class="score-badge" id="authBadge">
-      <button id="signInBtn" class="auth-btn" type="button">Iniciar sesión con Google</button>
+      <div id="googleBtnContainer"></div>
       <div id="userInfo" class="user-info" style="display:none;">
         <img id="userPhoto" alt="" referrerpolicy="no-referrer">
         <span id="userName"></span>
@@ -519,9 +519,7 @@
   <footer>Toca 🔊 para escuchar cada palabra. Funciona mejor en Chrome o Safari con el sonido activado.</footer>
 </div>
 
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
 
 <script>
 /* ---------- DATA ---------- */
@@ -877,14 +875,12 @@ function loadVocab(){
 }
 function saveVocab(list){
   try { localStorage.setItem("mi_vocab_en", JSON.stringify(list)); } catch(e){}
-  queueCloudSync();
 }
 function loadBest(){
   try { return parseInt(localStorage.getItem("mi_best_score") || "0", 10); } catch(e){ return 0; }
 }
 function saveBest(n){
   try { localStorage.setItem("mi_best_score", String(n)); } catch(e){}
-  queueCloudSync();
 }
 
 function loadRepaso(){
@@ -895,7 +891,6 @@ function loadRepaso(){
 }
 function saveRepaso(list){
   try { localStorage.setItem("mi_repaso", JSON.stringify(list)); } catch(e){}
-  queueCloudSync();
 }
 let repaso = loadRepaso();
 
@@ -931,124 +926,71 @@ let vocab = loadVocab();
 document.getElementById("bestScore").textContent = loadBest();
 refreshRepasoBadge();
 
-/* ---------- SYNC CON GOOGLE (Firebase) ---------- */
-// Pega aquí la config de tu proyecto Firebase (Firebase console → Configuración
-// del proyecto → tus apps → SDK setup and configuration → Config). No son
-// secretas: es normal y seguro que viajen en el HTML de un sitio público; el
-// acceso real se protege con las reglas de seguridad de Firestore.
-const firebaseConfig = {
-  apiKey: "TU_API_KEY",
-  authDomain: "TU_PROYECTO.firebaseapp.com",
-  projectId: "TU_PROYECTO",
-  storageBucket: "TU_PROYECTO.appspot.com",
-  messagingSenderId: "TU_SENDER_ID",
-  appId: "TU_APP_ID"
-};
+/* ---------- LOGIN CON GOOGLE ---------- */
+// Client ID de OAuth (Google Cloud Console → APIs y servicios → Credenciales →
+// Crear credenciales → ID de cliente de OAuth → tipo "Aplicación web").
+// No es secreto: es normal y seguro que viaje en el HTML de un sitio público.
+const GOOGLE_CLIENT_ID = "TU_CLIENT_ID.apps.googleusercontent.com";
+const googleLoginEnabled = GOOGLE_CLIENT_ID !== "TU_CLIENT_ID.apps.googleusercontent.com";
 
-const syncEnabled = firebaseConfig.apiKey !== "TU_API_KEY" && typeof firebase !== "undefined";
-let cloudUser = null;
-let cloudDb = null;
-let syncTimer = null;
-
-function mergeByKey(localList, cloudList, keyFn, pickBetter){
-  const map = new Map();
-  (cloudList || []).forEach(item => map.set(keyFn(item), item));
-  (localList || []).forEach(item => {
-    const key = keyFn(item);
-    const existing = map.get(key);
-    map.set(key, existing ? pickBetter(existing, item) : item);
-  });
-  return Array.from(map.values());
-}
-
-function mergeProgress(local, cloud){
-  const vocabMerged = mergeByKey(
-    local.vocab, cloud.vocab,
-    v => (v.en || "").toLowerCase(),
-    (a) => a // ya existe en la nube, se conserva
-  );
-  const repasoMerged = mergeByKey(
-    local.repaso, cloud.repaso,
-    r => (r.en || "").toLowerCase(),
-    (a, b) => (((a.misses||0)+(a.hits||0)) >= ((b.misses||0)+(b.hits||0)) ? a : b)
-  );
-  return {
-    vocab: vocabMerged,
-    bestScore: Math.max(local.bestScore || 0, cloud.bestScore || 0),
-    repaso: repasoMerged
-  };
-}
-
-async function pullAndMergeFromCloud(user){
+function decodeJwt(token){
   try {
-    const ref = cloudDb.collection("progress").doc(user.uid);
-    const snap = await ref.get();
-    const local = { vocab: loadVocab(), bestScore: loadBest(), repaso: loadRepaso() };
-    let merged;
-    if (snap.exists) {
-      merged = mergeProgress(local, snap.data() || {});
-    } else {
-      merged = local;
-    }
-    vocab = merged.vocab;
-    localStorage.setItem("mi_vocab_en", JSON.stringify(vocab));
-    if (merged.bestScore > loadBest()) {
-      localStorage.setItem("mi_best_score", String(merged.bestScore));
-    }
-    document.getElementById("bestScore").textContent = loadBest();
-    repaso = merged.repaso;
-    localStorage.setItem("mi_repaso", JSON.stringify(repaso));
-    refreshRepasoBadge();
-    if (wordTabState) { for (const k in wordTabState) delete wordTabState[k]; }
-    if (typeof render === "function") render();
-    await ref.set({ vocab: merged.vocab, bestScore: merged.bestScore, repaso: merged.repaso, updatedAt: Date.now() }, { merge: true });
-  } catch(err) {
-    console.warn("No se pudo sincronizar con la nube:", err);
-  }
+    const base64 = token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/");
+    const json = decodeURIComponent(
+      atob(base64).split("").map(c => "%" + c.charCodeAt(0).toString(16).padStart(2, "0")).join("")
+    );
+    return JSON.parse(json);
+  } catch(e){ return null; }
 }
 
-function queueCloudSync(){
-  if (!syncEnabled || !cloudUser || !cloudDb) return;
-  clearTimeout(syncTimer);
-  syncTimer = setTimeout(() => {
-    cloudDb.collection("progress").doc(cloudUser.uid).set({
-      vocab: loadVocab(),
-      bestScore: loadBest(),
-      repaso: loadRepaso(),
-      updatedAt: Date.now()
-    }, { merge: true }).catch(err => console.warn("No se pudo sincronizar con la nube:", err));
-  }, 1200);
-}
-
-const signInBtn = document.getElementById("signInBtn");
-const signOutBtn = document.getElementById("signOutBtn");
+const googleBtnContainer = document.getElementById("googleBtnContainer");
 const userInfoEl = document.getElementById("userInfo");
 const userNameEl = document.getElementById("userName");
 const userPhotoEl = document.getElementById("userPhoto");
+const signOutBtn = document.getElementById("signOutBtn");
 
-if (syncEnabled) {
-  firebase.initializeApp(firebaseConfig);
-  cloudDb = firebase.firestore();
-  const provider = new firebase.auth.GoogleAuthProvider();
+function showSignedIn(profile){
+  googleBtnContainer.style.display = "none";
+  userInfoEl.style.display = "flex";
+  userNameEl.textContent = profile.name || profile.email || "Cuenta";
+  userPhotoEl.src = profile.picture || "icon-192.png";
+  try {
+    localStorage.setItem("mi_google_profile", JSON.stringify({
+      name: profile.name, email: profile.email, picture: profile.picture
+    }));
+  } catch(e){}
+}
 
-  signInBtn.addEventListener("click", () => {
-    firebase.auth().signInWithPopup(provider).catch(err => {
-      alert("No se pudo iniciar sesión: " + err.message);
-    });
+function showSignedOut(){
+  googleBtnContainer.style.display = "block";
+  userInfoEl.style.display = "none";
+  try { localStorage.removeItem("mi_google_profile"); } catch(e){}
+}
+
+if (googleLoginEnabled) {
+  signOutBtn.addEventListener("click", () => {
+    if (window.google && google.accounts && google.accounts.id) {
+      google.accounts.id.disableAutoSelect();
+    }
+    showSignedOut();
   });
-  signOutBtn.addEventListener("click", () => firebase.auth().signOut());
 
-  firebase.auth().onAuthStateChanged(async (user) => {
-    cloudUser = user;
-    if (user) {
-      signInBtn.style.display = "none";
-      userInfoEl.style.display = "flex";
-      userNameEl.textContent = user.displayName || user.email || "Cuenta";
-      userPhotoEl.src = user.photoURL || "icon-192.png";
-      await pullAndMergeFromCloud(user);
-    } else {
-      signInBtn.style.display = "inline-flex";
-      userInfoEl.style.display = "none";
+  window.addEventListener("load", () => {
+    if (!window.google || !google.accounts || !google.accounts.id) return;
+    google.accounts.id.initialize({
+      client_id: GOOGLE_CLIENT_ID,
+      callback: (response) => {
+        const profile = decodeJwt(response.credential);
+        if (profile) showSignedIn(profile);
+      }
+    });
+    google.accounts.id.renderButton(googleBtnContainer, {
+      theme: "outline", size: "medium", text: "signin", shape: "pill"
+    });
+
+    const saved = localStorage.getItem("mi_google_profile");
+    if (saved) {
+      try { showSignedIn(JSON.parse(saved)); } catch(e){}
     }
   });
 } else {
